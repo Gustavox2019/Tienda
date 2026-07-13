@@ -5,39 +5,6 @@
   <meta name="viewport" content="width=device-width, initial-scale=1.0">
   <title>Pedidos Almacén - 10 Pisos</title>
   
-  <script>
-    (function() {
-      window.addEventListener('unhandledrejection', function(event) {
-        if (event.reason && (event.reason.toString().includes('Failed to fetch') || event.reason.toString().includes('webpushr'))) {
-          console.warn('Escudo: Bloqueada caída de Webpushr en desarrollo:', event.reason);
-          event.preventDefault();
-        }
-      });
-
-      var isPreviewEnv = window.location.hostname.includes('usercontent.goog') || 
-                         window.location.protocol === 'blob:' || 
-                         window.location.href.includes('blob:') ||
-                         window.location.hostname === '';
-
-      if (isPreviewEnv) {
-        console.log("Escudo Activo: Entorno de simulación.");
-        window.webpushr = function() { console.log("Simulador Webpushr:", arguments); };
-      } else {
-        (function(w,d, s, id) {
-          if(typeof(w.webpushr)!=='undefined') return;
-          w.webpushr=w.webpushr||function(){(w.webpushr.q=w.webpushr.q||[]).push(arguments)};
-          var js, fjs = d.getElementsByTagName(s)[0];
-          js = d.createElement(s); js.id = id; js.async=1;
-          js.src = "https://cdn.webpushr.com/app.min.js"; 
-          fjs.parentNode.appendChild(js);
-        }(window,document,'script','webpushr-jssdk-alternative'));
-
-        // Configuración nativa óptima para la subcarpeta /Tienda/
-        webpushr('init','BI7aUvGQghqBNGCEP9sd0dPK94iuVU5ChZSC5vcOKl--FC1N1CDHwzmYrYvnSUXSgpjeD3xyTtHydPXbD85ybY8', { serviceWorkerPath: '/Tienda/webpushr-sw.js' });
-      }
-    })();
-  </script>
-
   <script src="https://cdn.tailwindcss.com"></script>
   <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.4.0/css/all.min.css">
   
@@ -109,7 +76,7 @@
 
   <div id="loading-overlay" class="fixed inset-0 bg-slate-900/80 z-50 flex flex-col items-center justify-center text-white transition-opacity duration-300">
     <div class="animate-spin rounded-full h-12 w-12 border-4 border-teal-500 border-t-transparent"></div>
-    <p class="mt-4 font-semibold text-sm">Cargando datos...</p>
+    <p class="mt-4 font-semibold text-sm">Sincronizando datos...</p>
   </div>
 
   <header class="bg-slate-900 text-white sticky top-0 z-40 shadow-md px-4 py-3 flex items-center justify-between">
@@ -122,12 +89,7 @@
         <p class="text-[10px] text-teal-400 uppercase font-semibold tracking-wider" id="header-user-role">Vendedor</p>
       </div>
     </div>
-    <div class="flex items-center gap-2">
-      <button onclick="requestPushPermission()" class="text-xs bg-teal-950/40 text-teal-400 px-3 py-1.5 rounded-lg border border-teal-500/50">
-        <i class="fa-solid fa-bell"></i> Alertas
-      </button>
-      <button onclick="logout()" class="text-[11px] text-red-400 font-bold bg-slate-800 px-3 py-1.5 rounded-lg">Salir</button>
-    </div>
+    <button onclick="logout()" class="text-[11px] text-red-400 font-bold bg-slate-800 px-3 py-1.5 rounded-lg">Salir</button>
   </header>
 
   <main class="max-w-md mx-auto p-4 space-y-4">
@@ -209,23 +171,6 @@
       }
     }
 
-    function syncWebpushrAttributes() {
-      if (typeof webpushr === 'function' && window.webpushr.name !== 'w' && sessionUser?.name) {
-        try {
-          webpushr('customAttribute', { "username": String(sessionUser.name), "role": String(sessionUser.role) });
-        } catch(e) { console.warn(e); }
-      }
-    }
-
-    function requestPushPermission() {
-      if (typeof webpushr === 'function') {
-        webpushr('showPrompt');
-        showToast("Sigue las instrucciones en pantalla.", "info");
-      } else {
-        showToast("Cargando motor de notificaciones...", "error");
-      }
-    }
-
     function showToast(m, type) {
       const t = document.getElementById('toast');
       document.getElementById('toast-text').innerText = m;
@@ -275,7 +220,6 @@
       document.getElementById('login-overlay').classList.add('hidden');
       document.getElementById('header-user-name').innerText = sessionUser.name;
       document.getElementById('header-user-role').innerText = sessionUser.role;
-      syncWebpushrAttributes();
       switchTab(sessionUser.role === 'Vendedor' ? 'view-my-orders' : 'view-orders');
       initApp();
     }
@@ -316,7 +260,6 @@
           actionsHtml = `<div class="flex gap-2 pt-2"><button onclick="updateStatus(${o.rowNum}, 'Disponible')" class="flex-1 bg-teal-600 text-white font-bold text-xs py-1.5 rounded-lg">Disponible</button><button onclick="updateStatus(${o.rowNum}, 'Sin stock')" class="flex-1 bg-red-500 text-white font-bold text-xs py-1.5 rounded-lg">Sin Stock</button></div>`;
         }
 
-        // Corrección de propiedad: Mapear Historial_Cambios desde el backend
         let historyHtml = o.Historial_Cambios ? `<div class="text-[10px] text-slate-400 mt-1 whitespace-pre-line border-t pt-1 border-slate-100">${o.Historial_Cambios}</div>` : "";
 
         card.innerHTML = `
