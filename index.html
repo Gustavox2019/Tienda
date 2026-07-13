@@ -20,10 +20,9 @@
                          window.location.hostname === '';
 
       if (isPreviewEnv) {
-        console.log("Escudo Activo: Entorno de pruebas. Webpushr simulado.");
+        console.log("Escudo Activo: Entorno de simulación.");
         window.webpushr = function() { console.log("Simulador Webpushr:", arguments); };
       } else {
-        // CÓDIGO OFICIAL ADAPTADO PARA TU SUBTIENDA EN GITHUB PAGES
         (function(w,d, s, id) {
           if(typeof(w.webpushr)!=='undefined') return;
           w.webpushr=w.webpushr||function(){(w.webpushr.q=w.webpushr.q||[]).push(arguments)};
@@ -31,9 +30,9 @@
           js = d.createElement(s); js.id = id; js.async=1;
           js.src = "https://cdn.webpushr.com/app.min.js"; 
           fjs.parentNode.appendChild(js);
-        }(window,document,'script','webpushr-jssdk'));
+        }(window,document,'script','webpushr-jssdk-alternative'));
 
-        // CONFIGURACIÓN CON TU LLAVE REAL EXTRAÍDA DE TU CONSOLA
+        // Sintaxis limpia compatible con subcarpetas en GitHub Pages
         webpushr('init','BI7aUvGQghqBNGCEP9sd0dPK94iuVU5ChZSC5vcOKl--FC1N1CDHwzmYrYvnSUXSgpjeD3xyTtHydPXbD85ybY8', { serviceWorkerPath: '/Tienda/webpushr-sw.js' });
       }
     })();
@@ -72,7 +71,7 @@
     </div>
     <p id="inapp-desc" class="text-xs text-slate-300 leading-relaxed font-medium"></p>
     <div id="inapp-image-container" class="hidden w-full h-32 rounded-xl overflow-hidden border border-slate-700/50">
-      <img id="inapp-image" class="w-full h-full object-cover" src="" alt="Foto Producto">
+      <img id="inapp-image" class="w-full h-full object-cover" src="" alt="Foto">
     </div>
   </div>
 
@@ -90,20 +89,20 @@
       <div id="form-login-box" class="space-y-3">
         <input type="text" id="login-username" placeholder="Nombre de usuario" class="w-full px-4 py-2.5 bg-slate-900 border border-slate-700 rounded-xl focus:outline-none focus:border-teal-500 text-sm">
         <input type="password" id="login-pass" placeholder="Contraseña" class="w-full px-4 py-2.5 bg-slate-900 border border-slate-700 rounded-xl focus:outline-none focus:border-teal-500 text-sm">
-        <button onclick="submitLogin()" class="w-full bg-teal-600 hover:bg-teal-700 text-white font-bold py-2.5 rounded-xl text-sm transition-all shadow-lg">Entrar al Sistema</button>
+        <button onclick="submitLogin()" class="w-full bg-teal-600 hover:bg-teal-700 text-white font-bold py-2.5 rounded-xl text-sm transition-all shadow-lg">Entrar</button>
       </div>
 
       <div id="form-register-box" class="space-y-3 hidden">
-        <input type="text" id="reg-username" placeholder="Elige usuario" class="w-full px-4 py-2.5 bg-slate-900 border border-slate-700 rounded-xl focus:outline-none focus:border-teal-500 text-sm">
-        <input type="password" id="reg-pass" placeholder="Contraseña" class="w-full px-4 py-2.5 bg-slate-900 border border-slate-700 rounded-xl focus:outline-none focus:border-teal-500 text-sm">
+        <input type="text" id="reg-username" placeholder="Elige tu nombre" class="w-full px-4 py-2.5 bg-slate-900 border border-slate-700 rounded-xl focus:outline-none focus:border-teal-500 text-sm">
+        <input type="password" id="reg-pass" placeholder="Contraseña nueva" class="w-full px-4 py-2.5 bg-slate-900 border border-slate-700 rounded-xl focus:outline-none focus:border-teal-500 text-sm">
         <div>
-          <label class="block text-[10px] uppercase font-bold text-slate-400 mb-1 pl-1">Área:</label>
+          <label class="block text-[10px] uppercase font-bold text-slate-400 mb-1 pl-1">Área asignada:</label>
           <div class="grid grid-cols-2 gap-2">
             <button type="button" onclick="selectRegisterRole('Vendedor')" id="reg-role-v" class="py-2 rounded-lg border border-teal-500 bg-teal-900/30 text-teal-400 text-xs font-bold text-center">Vendedor</button>
             <button type="button" onclick="selectRegisterRole('Almacenero')" id="reg-role-a" class="py-2 rounded-lg border border-slate-700 text-slate-400 text-xs font-bold text-center">Almacenero</button>
           </div>
         </div>
-        <button onclick="submitRegister()" class="w-full bg-emerald-600 hover:bg-emerald-700 text-white font-bold py-2.5 rounded-xl text-sm transition-all shadow-lg">Registrar Cuenta</button>
+        <button onclick="submitRegister()" class="w-full bg-emerald-600 hover:bg-emerald-700 text-white font-bold py-2.5 rounded-xl text-sm transition-all shadow-lg">Registrar</button>
       </div>
     </div>
   </div>
@@ -115,7 +114,7 @@
 
   <div id="loading-overlay" class="fixed inset-0 bg-slate-900/80 z-50 flex flex-col items-center justify-center text-white transition-opacity duration-300">
     <div class="animate-spin rounded-full h-12 w-12 border-4 border-teal-500 border-t-transparent"></div>
-    <p class="mt-4 font-semibold text-sm">Cargando...</p>
+    <p class="mt-4 font-semibold text-sm">Sincronizando Base de Datos...</p>
   </div>
 
   <header class="bg-slate-900 text-white sticky top-0 z-40 shadow-md px-4 py-3 flex items-center justify-between">
@@ -130,7 +129,7 @@
     </div>
     <div class="flex items-center gap-2">
       <button onclick="requestPushPermission()" class="text-xs bg-teal-950/40 text-teal-400 px-3 py-1.5 rounded-lg border border-teal-500/50 animate-pulse">
-        <i class="fa-solid fa-bell"></i> Activar Alertas
+        <i class="fa-solid fa-bell"></i> Activar Alertas Nativas
       </button>
       <button onclick="logout()" class="text-[11px] text-red-400 font-bold bg-slate-800 px-3 py-1.5 rounded-lg">Salir</button>
     </div>
@@ -138,13 +137,13 @@
 
   <main class="max-w-md mx-auto p-4 space-y-4">
     <section id="view-my-orders" class="hidden space-y-4">
-      <h2 class="text-base font-bold text-slate-900 flex items-center gap-2"><i class="fa-solid fa-user-tag text-teal-600"></i>Mis Pedidos</h2>
+      <h2 class="text-base font-bold text-slate-900 flex items-center gap-2"><i class="fa-solid fa-user-tag text-teal-600"></i>Mis Pedidos Solicitados</h2>
       <div id="my-orders-container" class="space-y-3"></div>
     </section>
 
     <section id="view-orders" class="space-y-4">
       <div class="flex items-center justify-between">
-        <h2 class="text-base font-bold text-slate-900 flex items-center gap-2"><i class="fa-solid fa-list-check text-teal-600"></i>Cola General</h2>
+        <h2 class="text-base font-bold text-slate-900 flex items-center gap-2"><i class="fa-solid fa-list-check text-teal-600"></i>Cola General Activa</h2>
         <div class="flex bg-slate-200 p-1 rounded-lg text-[10px] font-bold">
           <button id="filter-all" onclick="setFilter('all')" class="px-3 py-1 rounded-md bg-white text-slate-800 shadow-sm">Todos</button>
           <button id="filter-pending" onclick="setFilter('pending')" class="px-3 py-1 rounded-md text-slate-600">Por Atender</button>
@@ -154,30 +153,30 @@
     </section>
 
     <section id="view-new-order" class="hidden space-y-4">
-      <h2 class="text-base font-bold text-slate-900"><i class="fa-solid fa-cart-plus text-teal-600 mr-2"></i>Pedir Producto</h2>
+      <h2 class="text-base font-bold text-slate-900"><i class="fa-solid fa-cart-plus text-teal-600 mr-2"></i>Nueva Orden</h2>
       <form id="order-form" onsubmit="submitOrder(event)" class="bg-white rounded-2xl p-5 shadow-sm border border-slate-200 space-y-4">
         <div class="relative">
-          <label class="block text-xs font-bold text-slate-500 mb-1">Producto / Código</label>
-          <input type="text" id="order-product" required placeholder="Código..." oninput="filterAutocomplete(this.value)" autocomplete="off" class="w-full px-4 py-2.5 rounded-xl bg-slate-50 border border-slate-200 text-sm">
+          <label class="block text-xs font-bold text-slate-500 mb-1">Producto / Identificador</label>
+          <input type="text" id="order-product" required placeholder="Escribe el código..." oninput="filterAutocomplete(this.value)" autocomplete="off" class="w-full px-4 py-2.5 rounded-xl bg-slate-50 border border-slate-200 text-sm">
           <div id="autocomplete-box" class="absolute left-0 right-0 top-full mt-1 bg-white border border-slate-200 rounded-xl shadow-xl max-h-40 overflow-y-auto z-50 hidden no-scrollbar"></div>
         </div>
         <div>
-          <label class="block text-xs font-bold text-slate-500 mb-1">Cantidad</label>
+          <label class="block text-xs font-bold text-slate-500 mb-1">Unidades</label>
           <input type="number" id="order-qty" required min="1" value="1" class="w-full px-4 py-2.5 rounded-xl bg-slate-50 border border-slate-200 text-sm">
         </div>
         <div>
-          <label class="block text-xs font-bold text-slate-500 mb-1">Notas adicionales</label>
-          <textarea id="order-notes" rows="2" class="w-full px-4 py-2.5 rounded-xl bg-slate-50 border border-slate-200 text-sm"></textarea>
+          <label class="block text-xs font-bold text-slate-500 mb-1">Detalles o Ubicación</label>
+          <textarea id="order-notes" rows="2" placeholder="Indicaciones para el almacenero..." class="w-full px-4 py-2.5 rounded-xl bg-slate-50 border border-slate-200 text-sm"></textarea>
         </div>
         <div>
-          <label class="block text-xs font-bold text-slate-500 mb-1">Foto (Opcional)</label>
+          <label class="block text-xs font-bold text-slate-500 mb-1">Añadir Foto (Opcional)</label>
           <div class="flex items-center gap-3">
-            <button type="button" onclick="document.getElementById('camera-input').click()" class="py-2 px-4 bg-slate-100 rounded-xl text-xs font-bold text-slate-600"><i class="fa-solid fa-camera"></i> Cámara</button>
+            <button type="button" onclick="document.getElementById('camera-input').click()" class="py-2 px-4 bg-slate-100 rounded-xl text-xs font-bold text-slate-600"><i class="fa-solid fa-camera"></i> Capturar</button>
             <input type="file" id="camera-input" accept="image/*" capture="environment" class="hidden" onchange="previewImage(this)">
             <div id="image-preview-container" class="hidden w-10 h-10 rounded-lg overflow-hidden border"><img id="image-preview" class="w-full h-full object-cover"></div>
           </div>
         </div>
-        <button type="submit" class="w-full bg-teal-600 text-white font-bold py-3 rounded-xl text-sm shadow-md">Enviar Pedido</button>
+        <button type="submit" class="w-full bg-teal-600 text-white font-bold py-3 rounded-xl text-sm shadow-md">Enviar a Almacén</button>
       </form>
     </section>
   </main>
@@ -202,6 +201,7 @@
     let activeFilter = 'all';
     let sessionUser = { name: '', role: 'Vendedor' };
     let selectedPhotoBase64 = '';
+    let registerSelectedRole = "Vendedor";
     let lastRenderedHash = ""; 
 
     window.addEventListener('DOMContentLoaded', () => { checkLocalAuth(); });
@@ -217,7 +217,7 @@
           return await res.json();
         }
       } catch (err) {
-        showToast("Error de comunicación.", "error");
+        showToast("Error de conexión.", "error");
         document.getElementById('loading-overlay').classList.add('hidden');
         throw err;
       }
@@ -227,6 +227,7 @@
       if (typeof webpushr === 'function' && window.webpushr.name !== 'w' && sessionUser?.name) {
         try {
           webpushr('customAttribute', { "username": String(sessionUser.name), "role": String(sessionUser.role) });
+          console.log("Atributos Webpushr sincronizados:", sessionUser.name, sessionUser.role);
         } catch(e) { console.warn(e); }
       }
     }
@@ -234,9 +235,9 @@
     function requestPushPermission() {
       if (typeof webpushr === 'function') {
         webpushr('showPrompt');
-        showToast("Sigue las instrucciones en pantalla.", "info");
+        showToast("Sigue los pasos indicados por el navegador.", "info");
       } else {
-        showToast("Cargando motor de notificaciones...", "error");
+        showToast("Inicializando motor de Alertas...", "error");
       }
     }
 
@@ -319,18 +320,79 @@
       myCont.innerHTML = ""; genCont.innerHTML = "";
       
       ordersData.forEach(o => {
+        const isOwner = (o.Vendedor === sessionUser.name);
         const card = document.createElement('div');
-        card.className = "bg-white p-4 rounded-xl border border-slate-200 shadow-sm space-y-2";
-        card.innerHTML = `<div class="flex justify-between font-bold text-xs"><span>📦 ${o.Producto} (x${o.Cantidad})</span><span class="text-teal-600">${o.Estado}</span></div><p class="text-xs text-slate-500">${o.Notas || ''}</p>`;
+        card.className = "bg-white p-4 rounded-xl border border-slate-200 shadow-sm space-y-2 flex flex-col justify-between";
         
-        if (o.Vendedor === sessionUser.name) myCont.appendChild(card.cloneNode(true));
+        let actionsHtml = "";
+        if (sessionUser.role === "Almacenero" && o.Estado === "Pendiente") {
+          actionsHtml = `<div class="flex gap-2 pt-2"><button onclick="updateStatus(${o.rowNum}, 'Tomado')" class="flex-1 bg-amber-500 text-white font-bold text-xs py-1.5 rounded-lg">Tomar Pedido</button></div>`;
+        } else if (sessionUser.role === "Almacenero" && o.Estado === "Tomado") {
+          actionsHtml = `<div class="flex gap-2 pt-2"><button onclick="updateStatus(${o.rowNum}, 'Disponible')" class="flex-1 bg-teal-600 text-white font-bold text-xs py-1.5 rounded-lg">Listo / Disponible</button><button onclick="updateStatus(${o.rowNum}, 'Sin stock')" class="flex-1 bg-red-500 text-white font-bold text-xs py-1.5 rounded-lg">Sin Stock</button></div>`;
+        }
+
+        let photoHtml = o.Foto && o.Foto.startsWith("http") ? `<div class="w-full mt-2"><img src="${o.Foto}" class="h-24 w-full object-cover rounded-lg border"></div>` : "";
+        let historyHtml = o.Historial ? `<div class="text-[10px] text-slate-400 mt-1 whitespace-pre-line border-t pt-1 border-slate-100">${o.Historial}</div>` : "";
+
+        card.innerHTML = `
+          <div>
+            <div class="flex justify-between font-bold text-xs mb-1">
+              <span class="text-slate-900">📦 ${o.Producto} (x${o.Cantidad})</span>
+              <span class="px-2 py-0.5 rounded-full text-[10px] ${o.Estado === 'Pendiente' ? 'bg-amber-100 text-amber-800' : o.Estado === 'Tomado' ? 'bg-blue-100 text-blue-800' : 'bg-teal-100 text-teal-800'}">${o.Estado}</span>
+            </div>
+            <p class="text-xs text-slate-500 font-medium">Pedido por: <b class="text-slate-700">${o.Vendedor}</b></p>
+            ${o.Notas ? `<p class="text-xs bg-slate-50 p-2 rounded-lg text-slate-600 mt-1 italic">"${o.Notas}"</p>` : ''}
+            ${photoHtml}
+            ${historyHtml}
+          </div>
+          ${actionsHtml}
+        `;
+        
+        if (isOwner) myCont.appendChild(card.cloneNode(true));
         if (activeFilter === 'all' || o.Estado === 'Pendiente') genCont.appendChild(card);
       });
+    }
+
+    async function updateStatus(rowNum, status) {
+      document.getElementById('loading-overlay').classList.remove('hidden');
+      const res = await callBackend("updateOrder", { rowNum: rowNum, status: status, workerName: sessionUser.name, isEditingMode: false });
+      document.getElementById('loading-overlay').classList.add('hidden');
+      if (res.success) { showToast("Estado modificado.", "success"); loadData(true); }
+    }
+
+    function triggerInAppNotification(title, message, imageUrl) {
+      const alertBox = document.getElementById('inapp-notification');
+      document.getElementById('inapp-title').innerText = title;
+      document.getElementById('inapp-desc').innerText = message;
+      const imgContainer = document.getElementById('inapp-image-container');
+      if (imageUrl && imageUrl.startsWith("http")) {
+        document.getElementById('inapp-image').src = imageUrl;
+        imgContainer.classList.remove('hidden');
+      } else { imgContainer.classList.add('hidden'); }
+      
+      alertBox.classList.add('activa');
+      setTimeout(() => { alertBox.classList.remove('activa'); }, 5000);
     }
 
     function checkForNewAlerts(newData) {
       const currentHash = JSON.stringify(newData.map(o => o.ID_Pedido + '-' + o.Estado));
       if (lastRenderedHash === currentHash) return;
+      
+      const oldMap = {};
+      ordersData.forEach(o => { oldMap[o.ID_Pedido] = o.Estado; });
+      
+      newData.forEach(newOrder => {
+        const oldState = oldMap[newOrder.ID_Pedido];
+        if (oldState === undefined && ordersData.length > 0) {
+          if (sessionUser?.role === 'Almacenero') {
+            triggerInAppNotification("🚨 ¡NUEVO PEDIDO!", `Producto ${newOrder.Producto} solicitado por ${newOrder.Vendedor}.`, newOrder.Foto);
+          }
+        } else if (oldState !== undefined && oldState !== newOrder.Estado) {
+          if (sessionUser?.role === 'Vendedor' && newOrder.Vendedor === sessionUser.name) {
+            triggerInAppNotification("📢 ACTUALIZACIÓN", `Tu pedido de ${newOrder.Producto} cambió a: ${newOrder.Estado}`, newOrder.Foto);
+          }
+        }
+      });
       lastRenderedHash = currentHash;
     }
 
@@ -340,9 +402,11 @@
       document.getElementById('view-new-order').classList.add('hidden');
       document.getElementById(id).classList.remove('hidden');
     }
-    function setFilter(f) { activeFilter = f; loadData(true); }
+    function setFilter(f) { activeFilter = f; renderOrders(); }
     function previewImage(input) { if (input.files && input.files[0]) { const reader = new FileReader(); reader.onload = function(e) { selectedPhotoBase64 = e.target.result; document.getElementById('image-preview').src = e.target.result; document.getElementById('image-preview-container').classList.remove('hidden'); }; reader.readAsDataURL(input.files[0]); } }
     async function submitOrder(e) { e.preventDefault(); document.getElementById('loading-overlay').classList.remove('hidden'); await callBackend("addOrder", { product: document.getElementById('order-product').value, qty: document.getElementById('order-qty').value, notes: document.getElementById('order-notes').value, photoBase64: selectedPhotoBase64, senderName: sessionUser.name }); document.getElementById('order-form').reset(); selectedPhotoBase64 = ''; document.getElementById('image-preview-container').classList.add('hidden'); loadData(false); switchTab('view-my-orders'); }
+    function filterAutocomplete(v) { const box = document.getElementById('autocomplete-box'); if (!v) { box.classList.add('hidden'); return; } const matches = autocompleteList.filter(i => i.toLowerCase().includes(v.toLowerCase())); if(matches.length === 0){ box.classList.add('hidden'); return; } box.innerHTML = matches.map(m => `<div onclick="selectMatch('${m}')" class="px-4 py-2 hover:bg-slate-100 text-sm cursor-pointer">${m}</div>`).join(''); box.classList.remove('hidden'); }
+    function selectMatch(m) { document.getElementById('order-product').value = m; document.getElementById('autocomplete-box').classList.add('hidden'); }
   </script>
 </body>
 </html>
