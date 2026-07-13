@@ -7,15 +7,22 @@
   <script src="https://cdn.tailwindcss.com"></script>
   <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.4.0/css/all.min.css">
   
-  <!-- CÓDIGO DE SEGUIMIENTO WEBPUSHR - REGISTRO DE NOTIFICACIONES PUSH -->
+  <!-- CÓDIGO DE SEGUIMIENTO WEBPUSHR ALTERNATIVO (OPTIMIZADO PARA CARPETA /Tienda/) -->
   <script>
     (function(w,d, s, id) {
-      if(typeof w.webpushr !== 'undefined') return; w.webpushr = w.webpushr || function() { (w.webpushr.q = w.webpushr.q || []).push(arguments) };
-      var js, fjs = d.getElementsByTagName(s)[0]; js = d.createElement(s); js.id = id; js.async = 1;
-      // REEMPLAZA EL CÓDIGO DE ABAJO CON TU PROPIO SITE ID DE WEBPUSHR
-      js.src = "https://cdn.webpushr.com/app.js?siteid=60775"; 
-      fjs.parentNode.insertBefore(js, fjs);
-    }(window,document,'script','webpushr-jssdk'));
+      if(typeof(w.webpushr)!=='undefined') return;
+      w.webpushr=w.webpushr||function(){(w.webpushr.q=w.webpushr.q||[]).push(arguments)};
+      var js, fjs = d.getElementsByTagName(s)[0];
+      js = d.createElement(s); js.id = id; js.async=1;
+      js.src = "https://cdn.webpushr.com/app.min.js"; 
+      fjs.parentNode.appendChild(js);
+    }(window,document,'script','webpushr-jssdk-alternative'));
+
+    // =========================================================================================
+    // ⚠️ REEMPLAZA LA CLAVE DE ABAJO CON TU LLAVE LARGA (LA QUE EMPIEZA CON 'B' EN TU CAPTURA DE PANTALLA)
+    // Debe verse idéntico a lo que Webpushr te dio en la caja de texto gris de tu imagen derecha.
+    // =========================================================================================
+    webpushr('init','BKrWhfWBZ6Kgbbwl_zxTIDUN5Bgt6VftUPHNu08dFWvxQn695lcqq_REEMPLAZA_ESTO_CON_TU_LLAVE_LARGA', {serviceWorkerPath:'/Tienda/webpushr-sw.js'});
   </script>
 
   <style>
@@ -191,7 +198,7 @@
 
   <script>
     // URL DE TU GOOGLE APPS SCRIPT (REEMPLÁZALA CON TU ENLACE /EXEC)
-    const API_URL = "https://script.google.com/macros/s/AKfycbwQLLxxNQD3RlNmPOZrnTtUJYUVJ93cc_aC3tx5FDj7D-PF6wLf1SnVawVRTNkE0311Iw/exec";
+    const API_URL = "https://script.google.com/macros/s/AKfycbx7eHJuGKxNxg_O-K2gIkm9e5s2kWr50/exec";
 
     let ordersData = [];
     let autocompleteList = []; 
@@ -228,7 +235,6 @@
     // Activar y Sincronizar Registro en Webpushr
     function syncWebpushrAttributes() {
       if (typeof webpushr === 'function' && sessionUser && sessionUser.name) {
-        // Vinculamos el dispositivo actual con el usuario y rol para mandarle las push inteligentes
         webpushr('customAttribute', {
           "username": String(sessionUser.name),
           "role": String(sessionUser.role)
@@ -618,10 +624,6 @@
       }
       renderOrders();
     }
-<!-- start webpushr tracking code --> 
-<script>(function(w,d, s, id) {if(typeof(w.webpushr)!=='undefined') return;w.webpushr=w.webpushr||function(){(w.webpushr.q=w.webpushr.q||[]).push(arguments)};var js, fjs = d.getElementsByTagName(s)[0];js = d.createElement(s); js.id = id;js.src = "https://cdn.webpushr.com/app.min.js";
-fjs.parentNode.appendChild(js);}(window,document, 'script', 'webpushr-jssdk-alternative'));
-webpushr('init','BKrWhfWBZ6Kgbbwl_zxT1DUN5Bgf6VffIUPHnU08dFWvxQn695Icqq-3QGRpRTNArzWwvoYJ3m_9JxD55Bhsuqg','https://gustavox2019.github.io/Tienda/webpushr-sw.js','/Tienda/');</script>
-<!-- end webpushr tracking code -->
+  </script>
 </body>
 </html>
