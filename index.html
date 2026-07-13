@@ -2,7 +2,7 @@
 <html lang="es">
 <head>
   <meta charset="UTF-8">
-  <meta name="viewport" content="width=device-width, initial-scale=1.0">
+  <meta name="viewport" content="width=device-width, initial-scale=1.0, maximum-scale=1.0, user-scalable=no">
   <title>Pedidos Almacén - 10 Pisos</title>
   
   <script src="https://cdn.tailwindcss.com"></script>
@@ -22,7 +22,7 @@
     }
   </style>
 </head>
-<body class="bg-slate-100 font-sans text-slate-800 min-h-screen pb-20">
+<body class="bg-slate-100 font-sans text-slate-800 min-h-screen pb-24">
 
   <div id="inapp-notification" class="notificacion-emergente fixed top-4 left-1/2 -translate-x-1/2 w-[92%] max-w-sm bg-slate-900 text-white p-4 rounded-2xl shadow-2xl z-50 border border-slate-700/80 flex flex-col gap-3 pointer-events-none">
     <div class="flex items-center gap-2.5">
@@ -93,20 +93,24 @@
   </header>
 
   <main class="max-w-md mx-auto p-4 space-y-4">
-    <section id="view-my-orders" class="hidden space-y-4">
-      <h2 class="text-base font-bold text-slate-900 flex items-center gap-2"><i class="fa-solid fa-user-tag text-teal-600"></i>Mis Pedidos</h2>
-      <div id="my-orders-container" class="space-y-3"></div>
+    <section id="view-my-orders" class="hidden space-y-3">
+      <h2 class="text-sm font-bold text-slate-500 uppercase tracking-wider pl-1 flex items-center gap-2">
+        <i class="fa-solid fa-user-tag text-teal-500 text-xs"></i>Mis Pedidos
+      </h2>
+      <div id="my-orders-container" class="space-y-2.5"></div>
     </section>
 
-    <section id="view-orders" class="space-y-4">
-      <div class="flex items-center justify-between">
-        <h2 class="text-base font-bold text-slate-900 flex items-center gap-2"><i class="fa-solid fa-list-check text-teal-600"></i>Cola General</h2>
-        <div class="flex bg-slate-200 p-1 rounded-lg text-[10px] font-bold">
-          <button id="filter-all" onclick="setFilter('all')" class="px-3 py-1 rounded-md bg-white text-slate-800 shadow-sm">Todos</button>
-          <button id="filter-pending" onclick="setFilter('pending')" class="px-3 py-1 rounded-md text-slate-600">Por Atender</button>
+    <section id="view-orders" class="space-y-3">
+      <div class="flex items-center justify-between pl-1">
+        <h2 class="text-sm font-bold text-slate-500 uppercase tracking-wider flex items-center gap-2">
+          <i class="fa-solid fa-list-check text-teal-500 text-xs"></i>Cola General
+        </h2>
+        <div class="flex bg-slate-200 p-0.5 rounded-lg text-[10px] font-bold shadow-inner">
+          <button id="filter-all" onclick="setFilter('all')" class="px-3 py-1 rounded-md bg-white text-slate-800 shadow-sm transition-all duration-200">Todos</button>
+          <button id="filter-pending" onclick="setFilter('pending')" class="px-3 py-1 rounded-md text-slate-600 transition-all duration-200">Por Atender</button>
         </div>
       </div>
-      <div id="orders-container" class="space-y-3"></div>
+      <div id="orders-container" class="space-y-2.5"></div>
     </section>
 
     <section id="view-new-order" class="hidden space-y-4">
@@ -130,7 +134,7 @@
     </section>
   </main>
 
-  <nav class="fixed bottom-0 left-0 right-0 bg-white border-t border-slate-200 py-2 px-4 shadow-xl flex justify-around items-center z-40 max-w-md mx-auto rounded-t-2xl">
+  <nav class="fixed bottom-0 left-0 right-0 bg-white/95 backdrop-blur-md border-t border-slate-200/80 py-2 px-4 shadow-[0_-4px_20px_rgba(0,0,0,0.05)] flex justify-around items-center z-40 max-w-md mx-auto rounded-t-2xl">
     <button onclick="switchTab('view-my-orders')" id="tab-my-orders" class="flex flex-col items-center gap-1 text-slate-400">
       <i class="fa-solid fa-user-clock text-lg"></i><span class="text-[9px] font-bold">Mis Pedidos</span>
     </button>
@@ -250,29 +254,60 @@
       
       ordersData.forEach(o => {
         const isOwner = (o.Vendedor === sessionUser.name);
+        
+        // Estilos de los estados basados exactamente en tu diseño original
+        let statusConfig = {
+          border: 'border-l-amber-500',
+          bg: 'bg-amber-50 text-amber-700 border-amber-200',
+          icon: 'fa-clock'
+        };
+        
+        if (o.Estado === 'Tomado') {
+          statusConfig = { border: 'border-l-blue-500', bg: 'bg-blue-50 text-blue-700 border-blue-200', icon: 'fa-spinner animate-spin' };
+        } else if (o.Estado === 'Disponible') {
+          statusConfig = { border: 'border-l-teal-500', bg: 'bg-teal-50 text-teal-700 border-teal-200', icon: 'fa-circle-check' };
+        } else if (o.Estado === 'Sin stock') {
+          statusConfig = { border: 'border-l-red-500', bg: 'bg-red-50 text-red-700 border-red-200', icon: 'fa-circle-xmark' };
+        }
+
+        // Crear la tarjeta con estructura compacta e idéntica a tu primera imagen
         const card = document.createElement('div');
-        card.className = "bg-white p-4 rounded-xl border border-slate-200 shadow-sm space-y-2 flex flex-col justify-between";
+        card.className = `bg-white rounded-xl border border-slate-200/80 border-l-4 ${statusConfig.border} p-3.5 shadow-[0_2px_8px_rgba(0,0,0,0.02)] flex flex-col justify-between gap-2.5`;
         
         let actionsHtml = "";
         if (sessionUser.role === "Almacenero" && o.Estado === "Pendiente") {
-          actionsHtml = `<div class="flex gap-2 pt-2"><button onclick="updateStatus(${o.rowNum}, 'Tomado')" class="flex-1 bg-amber-500 text-white font-bold text-xs py-1.5 rounded-lg">Tomar Pedido</button></div>`;
+          actionsHtml = `<button onclick="updateStatus(${o.rowNum}, 'Tomado')" class="bg-amber-500 hover:bg-amber-600 active:scale-95 text-white text-xs font-bold px-3 py-2 rounded-xl shadow-sm shadow-amber-500/10 transition-all flex items-center gap-1.5 justify-center"><i class="fa-solid fa-hand-holding-hand"></i>Tomar</button>`;
         } else if (sessionUser.role === "Almacenero" && o.Estado === "Tomado") {
-          actionsHtml = `<div class="flex gap-2 pt-2"><button onclick="updateStatus(${o.rowNum}, 'Disponible')" class="flex-1 bg-teal-600 text-white font-bold text-xs py-1.5 rounded-lg">Disponible</button><button onclick="updateStatus(${o.rowNum}, 'Sin stock')" class="flex-1 bg-red-500 text-white font-bold text-xs py-1.5 rounded-lg">Sin Stock</button></div>`;
+          actionsHtml = `
+            <div class="flex gap-2 w-full mt-1">
+              <button onclick="updateStatus(${o.rowNum}, 'Disponible')" class="flex-1 bg-teal-600 hover:bg-teal-700 active:scale-95 text-white text-xs font-bold py-2 rounded-xl shadow-sm transition-all flex items-center justify-center gap-1"><i class="fa-solid fa-check"></i>Listo</button>
+              <button onclick="updateStatus(${o.rowNum}, 'Sin stock')" class="flex-1 bg-red-500 hover:bg-red-600 active:scale-95 text-white text-xs font-bold py-2 rounded-xl shadow-sm transition-all flex items-center justify-center gap-1"><i class="fa-solid fa-xmark"></i>Sin Stock</button>
+            </div>`;
         }
 
-        let historyHtml = o.Historial_Cambios ? `<div class="text-[10px] text-slate-400 mt-1 whitespace-pre-line border-t pt-1 border-slate-100">${o.Historial_Cambios}</div>` : "";
+        let historyHtml = o.Historial_Cambios ? `<div class="text-[9px] text-slate-400/90 bg-slate-50 p-1.5 rounded-lg border border-slate-100 whitespace-pre-line leading-relaxed font-medium mt-1">${o.Historial_Cambios}</div>` : "";
 
         card.innerHTML = `
-          <div>
-            <div class="flex justify-between font-bold text-xs mb-1">
-              <span class="text-slate-900">📦 ${o.Producto} (x${o.Cantidad})</span>
-              <span class="px-2 py-0.5 rounded-full text-[10px] ${o.Estado === 'Pendiente' ? 'bg-amber-100 text-amber-800' : o.Estado === 'Tomado' ? 'bg-blue-100 text-blue-800' : 'bg-teal-100 text-teal-800'}">${o.Estado}</span>
+          <div class="flex items-start justify-between gap-3">
+            <div class="space-y-0.5 flex-1">
+              <div class="flex items-center gap-1.5">
+                <h3 class="font-bold text-sm text-slate-900 tracking-tight">${o.Producto}</h3>
+                <span class="bg-slate-100 text-slate-700 text-[11px] font-black px-1.5 py-0.5 rounded-md">x${o.Cantidad}</span>
+              </div>
+              <p class="text-[11px] text-slate-500 font-medium">Pedido por: <b class="text-slate-700 font-semibold">${o.Vendedor}</b></p>
             </div>
-            <p class="text-xs text-slate-500 font-medium">Pedido por: <b class="text-slate-700">${o.Vendedor}</b></p>
-            ${o.Notas ? `<p class="text-xs bg-slate-50 p-2 rounded-lg text-slate-600 mt-1 italic">"${o.Notas}"</p>` : ''}
-            ${historyHtml}
+            
+            ${sessionUser.role === "Almacenero" && o.Estado === "Pendiente" ? actionsHtml : `
+              <div class="flex items-center gap-1 px-2 py-1 rounded-lg text-[10px] font-bold border ${statusConfig.bg}">
+                <i class="fa-solid ${statusConfig.icon}"></i>
+                <span>${o.Estado}</span>
+              </div>
+            `}
           </div>
-          ${actionsHtml}
+
+          ${o.Notas ? `<div class="bg-slate-50/80 px-2.5 py-1.5 rounded-xl border border-slate-100 text-xs text-slate-600 italic font-medium leading-normal">"${o.Notas}"</div>` : ''}
+          ${historyHtml}
+          ${sessionUser.role === "Almacenero" && o.Estado === "Tomado" ? actionsHtml : ""}
         `;
         
         if (isOwner) myCont.appendChild(card.cloneNode(true));
