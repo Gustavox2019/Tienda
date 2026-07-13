@@ -193,6 +193,7 @@
   </nav>
 
   <script>
+    // ⚠️ ASEGÚRATE DE QUE ESTA URL SEA LA DE TU IMPLEMENTACIÓN ACTUAl DE APPS SCRIPT
     const API_URL = "https://script.google.com/macros/s/AKfycbwQLLxxNQD3RlNmPOZrnTtUJYUVJ93cc_aC3tx5FDj7D-PF6wLf1SnVawVRTNkE0311Iw/exec";
 
     let ordersData = [];
@@ -221,8 +222,9 @@
         }
       } catch (err) {
         console.error("Fallo comunicación:", err);
-        showToast("Error de conexión con la base de datos.", "error");
+        // GARANTÍA ANTIBLOQUEO: Apaga el loader si la red o el backend falla
         document.getElementById('loading-overlay').classList.add('hidden');
+        showToast("Error crítico: No se pudo conectar con Apps Script.", "error");
         throw err;
       }
     }
@@ -339,7 +341,6 @@
         switchTab(defaultTab);
         initApp();
       } else {
-        // Si no hay sesión, ocultamos el loader para dejar ver la pantalla de login
         document.getElementById('loading-overlay').classList.add('hidden');
       }
     }
@@ -367,6 +368,7 @@
       if (!silent) document.getElementById('loading-overlay').classList.remove('hidden');
       try {
         const data = await callBackend("getOrders");
+        // Aseguramos apagar el cartel de carga aquí
         document.getElementById('loading-overlay').classList.add('hidden');
         
         if (ordersData.length > 0 && data && data.length > 0) {
@@ -376,6 +378,7 @@
         ordersData = data || [];
         renderOrders();
       } catch (err) {
+        // Aseguramos apagar el cartel si la petición falló por completo
         document.getElementById('loading-overlay').classList.add('hidden');
       }
     }
