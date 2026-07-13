@@ -5,24 +5,30 @@
   <meta name="viewport" content="width=device-width, initial-scale=1.0">
   <title>Pedidos Almacén - 10 Pisos</title>
   
+  <!-- ESCUDO ANTIBLOQUEO: Evita errores de fetch de Webpushr en el entorno de previsualización de Gemini -->
   <script>
     (function() {
+      // 1. Capturador global de promesas rechazadas para evitar ventanas de error en consola
       window.addEventListener('unhandledrejection', function(event) {
         if (event.reason && (event.reason.toString().includes('Failed to fetch') || event.reason.toString().includes('webpushr'))) {
-          console.warn('Escudo: Bloqueada caída de Webpushr en desarrollo:', event.reason);
-          event.preventDefault();
+          console.warn('Escudo: Bloqueada caída de Webpushr en entorno de desarrollo/previsualización:', event.reason);
+          event.preventDefault(); // Evita que el navegador detenga la ejecución
         }
       });
 
+      // 2. Comprobar si estamos ejecutando en un iframe, sandbox o URL tipo blob/preview
       var isPreviewEnv = window.location.hostname.includes('usercontent.goog') || 
                          window.location.protocol === 'blob:' || 
                          window.location.href.includes('blob:') ||
                          window.location.hostname === '';
 
       if (isPreviewEnv) {
-        console.log("Escudo Activo: Entorno de simulación.");
-        window.webpushr = function() { console.log("Simulador Webpushr:", arguments); };
+        console.log("Escudo Activo: Detectado entorno de pruebas. Webpushr simulado para evitar el error Failed to Fetch.");
+        window.webpushr = function() {
+          console.log("Simulador Webpushr ejecutó acción:", arguments);
+        };
       } else {
+        // CÓDIGO DE SEGUIMIENTO WEBPUSHR OPTIMIZADO PARA TU CARPETA /Tienda/
         (function(w,d, s, id) {
           if(typeof(w.webpushr)!=='undefined') return;
           w.webpushr=w.webpushr||function(){(w.webpushr.q=w.webpushr.q||[]).push(arguments)};
@@ -32,8 +38,10 @@
           fjs.parentNode.appendChild(js);
         }(window,document,'script','webpushr-jssdk-alternative'));
 
-        // Sintaxis limpia compatible con subcarpetas en GitHub Pages
-        webpushr('init','BI7aUvGQghqBNGCEP9sd0dPK94iuVU5ChZSC5vcOKl--FC1N1CDHwzmYrYvnSUXSgpjeD3xyTtHydPXbD85ybY8', { serviceWorkerPath: '/Tienda/webpushr-sw.js' });
+        // =========================================================================================
+        // LLAVE REAL CONFIGURADA PARA TU CARPETA /Tienda/ (Evita fallos de Service Worker)
+        // =========================================================================================
+        webpushr('init','BATOQffJKXkKa6c6fL906YAYsGlukgdJp-ofN7nyQ5x-vrxjDPK4fnsjJ4XNKPEJZ4XDQU40cS_EO715Y3HVZok', {serviceWorkerPath:'/Tienda/webpushr-sw.js'});
       }
     })();
   </script>
@@ -47,6 +55,7 @@
     body { -webkit-tap-highlight-color: transparent; }
     .btn-active { background-color: white !important; box-shadow: 0 1px 3px rgba(0,0,0,0.1); color: #1e293b !important; }
     
+    /* Efecto de notificación in-app similar a Plaza Vea */
     .notificacion-emergente {
       transition: all 0.4s cubic-bezier(0.175, 0.885, 0.32, 1.275);
       transform: translateY(-150%) translateX(-50%);
@@ -58,6 +67,7 @@
 </head>
 <body class="bg-slate-100 font-sans text-slate-800 min-h-screen pb-20">
 
+  <!-- NOTIFICACIÓN ENRIQUECIDA FLOTANTE IN-APP (Estilo Plaza Vea) -->
   <div id="inapp-notification" class="notificacion-emergente fixed top-4 left-1/2 -translate-x-1/2 w-[92%] max-w-sm bg-slate-900 text-white p-4 rounded-2xl shadow-2xl z-50 border border-slate-700/80 flex flex-col gap-3 pointer-events-none">
     <div class="flex items-center gap-2.5">
       <div class="w-8 h-8 rounded-full bg-teal-500/15 flex items-center justify-center text-teal-400 border border-teal-500/30">
@@ -69,14 +79,18 @@
       </div>
       <span class="text-[10px] text-slate-400">Ahora</span>
     </div>
-    <p id="inapp-desc" class="text-xs text-slate-300 leading-relaxed font-medium"></p>
+    
+    <p id="inapp-desc" class="text-xs text-slate-300 leading-relaxed font-medium">Producto H2000-11 solicitado por Gustavo en el mostrador principal.</p>
+    
     <div id="inapp-image-container" class="hidden w-full h-32 rounded-xl overflow-hidden border border-slate-700/50">
-      <img id="inapp-image" class="w-full h-full object-cover" src="" alt="Foto">
+      <img id="inapp-image" class="w-full h-full object-cover" src="" alt="Foto Producto">
     </div>
   </div>
 
+  <!-- Login y Registro Integrado -->
   <div id="login-overlay" class="fixed inset-0 bg-slate-900 z-50 flex flex-col items-center justify-center p-6 text-white transition-all duration-300">
     <div class="w-full max-w-sm bg-slate-800 rounded-2xl p-6 shadow-2xl border border-slate-700 space-y-4">
+      
       <div class="text-center">
         <i class="fa-solid fa-boxes-stacked text-teal-400 text-3xl mb-1"></i>
         <h2 class="text-lg font-bold">Almacén 10 Pisos</h2>
@@ -86,40 +100,52 @@
         </div>
       </div>
 
+      <!-- Iniciar Sesión -->
       <div id="form-login-box" class="space-y-3">
         <input type="text" id="login-username" placeholder="Nombre de usuario" class="w-full px-4 py-2.5 bg-slate-900 border border-slate-700 rounded-xl focus:outline-none focus:border-teal-500 text-sm">
         <input type="password" id="login-pass" placeholder="Contraseña" class="w-full px-4 py-2.5 bg-slate-900 border border-slate-700 rounded-xl focus:outline-none focus:border-teal-500 text-sm">
-        <button onclick="submitLogin()" class="w-full bg-teal-600 hover:bg-teal-700 text-white font-bold py-2.5 rounded-xl text-sm transition-all shadow-lg">Entrar</button>
+        <button onclick="submitLogin()" class="w-full bg-teal-600 hover:bg-teal-700 text-white font-bold py-2.5 rounded-xl text-sm active:scale-95 transition-all shadow-lg">
+          Entrar al Sistema
+        </button>
       </div>
 
+      <!-- Registro de Usuario -->
       <div id="form-register-box" class="space-y-3 hidden">
-        <input type="text" id="reg-username" placeholder="Elige tu nombre" class="w-full px-4 py-2.5 bg-slate-900 border border-slate-700 rounded-xl focus:outline-none focus:border-teal-500 text-sm">
-        <input type="password" id="reg-pass" placeholder="Contraseña nueva" class="w-full px-4 py-2.5 bg-slate-900 border border-slate-700 rounded-xl focus:outline-none focus:border-teal-500 text-sm">
+        <input type="text" id="reg-username" placeholder="Elige tu nombre de usuario" class="w-full px-4 py-2.5 bg-slate-900 border border-slate-700 rounded-xl focus:outline-none focus:border-teal-500 text-sm">
+        <input type="password" id="reg-pass" placeholder="Asigna una Contraseña" class="w-full px-4 py-2.5 bg-slate-900 border border-slate-700 rounded-xl focus:outline-none focus:border-teal-500 text-sm">
+        
         <div>
-          <label class="block text-[10px] uppercase font-bold text-slate-400 mb-1 pl-1">Área asignada:</label>
+          <label class="block text-[10px] uppercase font-bold text-slate-400 mb-1 pl-1">Selecciona tu área:</label>
           <div class="grid grid-cols-2 gap-2">
-            <button type="button" onclick="selectRegisterRole('Vendedor')" id="reg-role-v" class="py-2 rounded-lg border border-teal-500 bg-teal-900/30 text-teal-400 text-xs font-bold text-center">Vendedor</button>
-            <button type="button" onclick="selectRegisterRole('Almacenero')" id="reg-role-a" class="py-2 rounded-lg border border-slate-700 text-slate-400 text-xs font-bold text-center">Almacenero</button>
+            <button onclick="selectRegisterRole('Vendedor')" id="reg-role-v" class="py-2 rounded-lg border border-teal-500 bg-teal-900/30 text-teal-400 text-xs font-bold text-center">Vendedor</button>
+            <button onclick="selectRegisterRole('Almacenero')" id="reg-role-a" class="py-2 rounded-lg border border-slate-700 text-slate-400 text-xs font-bold text-center">Almacenero</button>
           </div>
         </div>
-        <button onclick="submitRegister()" class="w-full bg-emerald-600 hover:bg-emerald-700 text-white font-bold py-2.5 rounded-xl text-sm transition-all shadow-lg">Registrar</button>
+
+        <button onclick="submitRegister()" class="w-full bg-emerald-600 hover:bg-emerald-700 text-white font-bold py-2.5 rounded-xl text-sm active:scale-95 transition-all shadow-lg">
+          Registrar Cuenta
+        </button>
       </div>
+
     </div>
   </div>
 
+  <!-- Alerta Toast -->
   <div id="toast" class="fixed top-4 left-1/2 transform -translate-x-1/2 z-50 px-4 py-3 rounded-xl shadow-lg flex items-center gap-2 transition-all duration-300 opacity-0 pointer-events-none">
     <span id="toast-icon"></span>
     <span id="toast-text" class="font-medium text-sm"></span>
   </div>
 
+  <!-- Pantalla de carga -->
   <div id="loading-overlay" class="fixed inset-0 bg-slate-900/80 z-50 flex flex-col items-center justify-center text-white transition-opacity duration-300">
     <div class="animate-spin rounded-full h-12 w-12 border-4 border-teal-500 border-t-transparent"></div>
-    <p class="mt-4 font-semibold text-sm">Sincronizando Base de Datos...</p>
+    <p class="mt-4 font-semibold text-sm">Procesando con la Base de Datos...</p>
   </div>
 
+  <!-- Cabecera -->
   <header class="bg-slate-900 text-white sticky top-0 z-40 shadow-md px-4 py-3 flex items-center justify-between">
     <div class="flex items-center gap-3">
-      <div class="w-10 h-10 rounded-full bg-slate-700 border-2 border-teal-500 flex items-center justify-center text-slate-300">
+      <div id="header-avatar" class="w-10 h-10 rounded-full bg-slate-700 border-2 border-teal-500 flex items-center justify-center text-slate-300">
         <i class="fa-solid fa-user"></i>
       </div>
       <div>
@@ -128,84 +154,117 @@
       </div>
     </div>
     <div class="flex items-center gap-2">
+      <!-- Botón de Activar Alertas Push reales -->
       <button onclick="requestPushPermission()" class="text-xs bg-teal-950/40 text-teal-400 px-3 py-1.5 rounded-lg border border-teal-500/50 animate-pulse">
-        <i class="fa-solid fa-bell"></i> Activar Alertas Nativas
+        <i class="fa-solid fa-bell"></i> Activar Alertas Reales
       </button>
       <button onclick="logout()" class="text-[11px] text-red-400 font-bold bg-slate-800 px-3 py-1.5 rounded-lg">Salir</button>
     </div>
   </header>
 
+  <!-- Contenedor de Vistas -->
   <main class="max-w-md mx-auto p-4 space-y-4">
+    
+    <!-- Vista 1: Mis Pedidos Solicitados -->
     <section id="view-my-orders" class="hidden space-y-4">
-      <h2 class="text-base font-bold text-slate-900 flex items-center gap-2"><i class="fa-solid fa-user-tag text-teal-600"></i>Mis Pedidos Solicitados</h2>
+      <h2 class="text-base font-bold text-slate-900 flex items-center gap-2">
+        <i class="fa-solid fa-user-tag text-teal-600"></i>Mis Pedidos Solicitados
+      </h2>
       <div id="my-orders-container" class="space-y-3"></div>
     </section>
 
+    <!-- Vista 2: Cola Activa General de Trabajo -->
     <section id="view-orders" class="space-y-4">
       <div class="flex items-center justify-between">
-        <h2 class="text-base font-bold text-slate-900 flex items-center gap-2"><i class="fa-solid fa-list-check text-teal-600"></i>Cola General Activa</h2>
-        <div class="flex bg-slate-200 p-1 rounded-lg text-[10px] font-bold">
-          <button id="filter-all" onclick="setFilter('all')" class="px-3 py-1 rounded-md bg-white text-slate-800 shadow-sm">Todos</button>
-          <button id="filter-pending" onclick="setFilter('pending')" class="px-3 py-1 rounded-md text-slate-600">Por Atender</button>
+        <h2 class="text-base font-bold text-slate-900 flex items-center gap-2">
+          <i class="fa-solid fa-list-check text-teal-600"></i>Cola Activa General
+        </h2>
+        <div class="flex bg-slate-200 p-1 rounded-lg text-[10px] font-bold shadow-inner">
+          <button id="filter-all" onclick="setFilter('all')" class="px-3 py-1 rounded-md bg-white text-slate-800 shadow-sm transition-all duration-200">Todos</button>
+          <button id="filter-pending" onclick="setFilter('pending')" class="px-3 py-1 rounded-md text-slate-600 transition-all duration-200">Por Atender</button>
         </div>
       </div>
       <div id="orders-container" class="space-y-3"></div>
     </section>
 
+    <!-- Vista 3: Formulario de Solicitud -->
     <section id="view-new-order" class="hidden space-y-4">
-      <h2 class="text-base font-bold text-slate-900"><i class="fa-solid fa-cart-plus text-teal-600 mr-2"></i>Nueva Orden</h2>
-      <form id="order-form" onsubmit="submitOrder(event)" class="bg-white rounded-2xl p-5 shadow-sm border border-slate-200 space-y-4">
+      <h2 class="text-base font-bold text-slate-900">
+        <i class="fa-solid fa-cart-plus text-teal-600 mr-2"></i>Solicitar Producto
+      </h2>
+      <form id="order-form" onsubmit="submitOrder(event)" class="bg-white rounded-2xl p-5 shadow-sm border border-slate-200/80 space-y-4">
+        
         <div class="relative">
-          <label class="block text-xs font-bold text-slate-500 mb-1">Producto / Identificador</label>
-          <input type="text" id="order-product" required placeholder="Escribe el código..." oninput="filterAutocomplete(this.value)" autocomplete="off" class="w-full px-4 py-2.5 rounded-xl bg-slate-50 border border-slate-200 text-sm">
+          <label class="block text-xs font-bold uppercase tracking-wider text-slate-500 mb-1">Producto o Código</label>
+          <input type="text" id="order-product" required placeholder="Buscar código..." oninput="filterAutocomplete(this.value)" autocomplete="off" class="w-full px-4 py-2.5 rounded-xl bg-slate-50 border border-slate-200 focus:outline-none focus:border-teal-500 text-sm font-medium">
           <div id="autocomplete-box" class="absolute left-0 right-0 top-full mt-1 bg-white border border-slate-200 rounded-xl shadow-xl max-h-40 overflow-y-auto z-50 hidden no-scrollbar"></div>
         </div>
+
         <div>
-          <label class="block text-xs font-bold text-slate-500 mb-1">Unidades</label>
-          <input type="number" id="order-qty" required min="1" value="1" class="w-full px-4 py-2.5 rounded-xl bg-slate-50 border border-slate-200 text-sm">
+          <label class="block text-xs font-bold uppercase tracking-wider text-slate-500 mb-1">Cantidad</label>
+          <input type="number" id="order-qty" required min="1" value="1" class="w-full px-4 py-2.5 rounded-xl bg-slate-50 border border-slate-200 text-sm font-medium">
         </div>
+
         <div>
-          <label class="block text-xs font-bold text-slate-500 mb-1">Detalles o Ubicación</label>
-          <textarea id="order-notes" rows="2" placeholder="Indicaciones para el almacenero..." class="w-full px-4 py-2.5 rounded-xl bg-slate-50 border border-slate-200 text-sm"></textarea>
+          <label class="block text-xs font-bold uppercase tracking-wider text-slate-500 mb-1">Detalles Libres</label>
+          <textarea id="order-notes" rows="2" placeholder="Indicaciones libres..." class="w-full px-4 py-2.5 rounded-xl bg-slate-50 border border-slate-200 text-sm font-medium"></textarea>
         </div>
+
         <div>
-          <label class="block text-xs font-bold text-slate-500 mb-1">Añadir Foto (Opcional)</label>
+          <label class="block text-xs font-bold uppercase tracking-wider text-slate-500 mb-1">Foto Opcional</label>
           <div class="flex items-center gap-3">
-            <button type="button" onclick="document.getElementById('camera-input').click()" class="py-2 px-4 bg-slate-100 rounded-xl text-xs font-bold text-slate-600"><i class="fa-solid fa-camera"></i> Capturar</button>
+            <button type="button" onclick="document.getElementById('camera-input').click()" class="py-2 px-4 bg-slate-100 rounded-xl text-xs font-bold text-slate-600 flex items-center gap-2">
+              <i class="fa-solid fa-camera"></i> Cámara
+            </button>
             <input type="file" id="camera-input" accept="image/*" capture="environment" class="hidden" onchange="previewImage(this)">
-            <div id="image-preview-container" class="hidden w-10 h-10 rounded-lg overflow-hidden border"><img id="image-preview" class="w-full h-full object-cover"></div>
+            <div id="image-preview-container" class="hidden w-10 h-10 rounded-lg overflow-hidden border">
+              <img id="image-preview" class="w-full h-full object-cover">
+            </div>
           </div>
         </div>
-        <button type="submit" class="w-full bg-teal-600 text-white font-bold py-3 rounded-xl text-sm shadow-md">Enviar a Almacén</button>
+
+        <button type="submit" class="w-full bg-teal-600 hover:bg-teal-700 py-3 text-white font-bold rounded-xl text-sm transition-all active:scale-95 shadow-md">
+          Enviar a los 10 Pisos
+        </button>
       </form>
     </section>
+
   </main>
 
+  <!-- Barra de Navegación Fija -->
   <nav class="fixed bottom-0 left-0 right-0 bg-white border-t border-slate-200 py-2 px-4 shadow-xl flex justify-around items-center z-40 max-w-md mx-auto rounded-t-2xl">
     <button onclick="switchTab('view-my-orders')" id="tab-my-orders" class="flex flex-col items-center gap-1 text-slate-400">
-      <i class="fa-solid fa-user-clock text-lg"></i><span class="text-[9px] font-bold">Mis Pedidos</span>
+      <i class="fa-solid fa-user-clock text-lg"></i>
+      <span class="text-[9px] font-bold">Mis Pedidos</span>
     </button>
     <button onclick="switchTab('view-orders')" id="tab-orders" class="flex flex-col items-center gap-1 text-slate-400">
-      <i class="fa-solid fa-clipboard-list text-lg"></i><span class="text-[9px] font-bold">Cola Gral.</span>
+      <i class="fa-solid fa-clipboard-list text-lg"></i>
+      <span class="text-[9px] font-bold">Cola Gral.</span>
     </button>
     <button onclick="switchTab('view-new-order')" id="tab-new" class="flex flex-col items-center gap-1 text-slate-400">
-      <div class="w-9 h-9 rounded-full bg-teal-600 text-white flex items-center justify-center shadow-md -mt-4 border-2 border-white"><i class="fa-solid fa-plus text-xs"></i></div>
+      <div class="w-9 h-9 rounded-full bg-teal-600 text-white flex items-center justify-center shadow-md -mt-4 border-2 border-white">
+        <i class="fa-solid fa-plus text-xs"></i>
+      </div>
       <span class="text-[9px] font-bold">Pedir</span>
     </button>
   </nav>
 
   <script>
-    const API_URL = "https://script.google.com/macros/s/AKfycbwQLLxxNQD3RlNmPOZrnTtUJYUVJ93cc_aC3tx5FDj7D-PF6wLf1SnVawVRTNkE0311Iw/exec";
+    // URL DE TU GOOGLE APPS SCRIPT (REEMPLÁZALA CON TU ENLACE /EXEC)
+    const API_URL = "https://script.google.com/macros/s/AKfycbx7eHJuGKxNxg_O-K2gIkm9e5s2kWr50/exec";
+
     let ordersData = [];
     let autocompleteList = []; 
     let activeFilter = 'all';
     let sessionUser = { name: '', role: 'Vendedor' };
     let selectedPhotoBase64 = '';
+    let statesInEditMode = {}; 
     let registerSelectedRole = "Vendedor";
-    let lastRenderedHash = ""; 
+    let lastRenderedHash = ""; // Para evitar alertas por bucles infinitos de render
 
     window.addEventListener('DOMContentLoaded', () => { checkLocalAuth(); });
 
+    // Petición remota general (CORS-SAFE)
     async function callBackend(action, data = {}) {
       try {
         if (action === "getOrders" || action === "getProductAutocompleteList") {
@@ -213,47 +272,97 @@
           return await res.json();
         } else {
           data.action = action;
-          const res = await fetch(API_URL, { method: "POST", body: JSON.stringify(data) });
+          const res = await fetch(API_URL, {
+            method: "POST",
+            body: JSON.stringify(data)
+          });
           return await res.json();
         }
       } catch (err) {
-        showToast("Error de conexión.", "error");
+        console.error("Fallo comunicación:", err);
+        showToast("Error de conexión con la base de datos.", "error");
         document.getElementById('loading-overlay').classList.add('hidden');
         throw err;
       }
     }
 
+    // Activar y Sincronizar Registro en Webpushr
     function syncWebpushrAttributes() {
-      if (typeof webpushr === 'function' && window.webpushr.name !== 'w' && sessionUser?.name) {
+      // Solo ejecutar si Webpushr no es la versión dummy del escudo protector
+      if (typeof webpushr === 'function' && window.webpushr.name !== 'w' && sessionUser && sessionUser.name) {
         try {
-          webpushr('customAttribute', { "username": String(sessionUser.name), "role": String(sessionUser.role) });
-          console.log("Atributos Webpushr sincronizados:", sessionUser.name, sessionUser.role);
-        } catch(e) { console.warn(e); }
+          webpushr('customAttribute', {
+            "username": String(sessionUser.name),
+            "role": String(sessionUser.role)
+          });
+          console.log("Sincronizado atributos Webpushr:", sessionUser.name, sessionUser.role);
+        } catch(e) {
+          console.warn("Fallo registro en Webpushr:", e);
+        }
       }
     }
 
     function requestPushPermission() {
+      // Comprobar si Webpushr está en modo dummy
+      var isPreviewEnv = window.location.hostname.includes('usercontent.goog') || 
+                         window.location.protocol === 'blob:' || 
+                         window.location.hostname === '';
+
+      if (isPreviewEnv) {
+        showToast("Simulador: Permisos de alertas concedidos con éxito.", "success");
+        return;
+      }
+
       if (typeof webpushr === 'function') {
-        webpushr('showPrompt');
-        showToast("Sigue los pasos indicados por el navegador.", "info");
+        try {
+          webpushr('showPrompt');
+          showToast("Sigue las instrucciones para activar las notificaciones nativas.", "info");
+        } catch(e) {
+          showToast("No se pudo invocar el módulo de registro.", "error");
+        }
       } else {
-        showToast("Inicializando motor de Alertas...", "error");
+        showToast("El motor de notificaciones no ha cargado completamente aún.", "error");
       }
     }
 
     function showToast(m, type) {
       const t = document.getElementById('toast');
-      document.getElementById('toast-text').innerText = m;
+      const txt = document.getElementById('toast-text');
+      const icon = document.getElementById('toast-icon');
+      txt.innerText = m;
+      
       t.className = "fixed top-4 left-1/2 transform -translate-x-1/2 z-50 px-4 py-3 rounded-xl shadow-lg flex items-center gap-2 transition-all duration-300 border " + 
         (type === "success" ? "bg-emerald-100 text-emerald-800 border-emerald-200" : type === "error" ? "bg-red-100 text-red-800 border-red-200" : "bg-blue-100 text-blue-800 border-blue-200");
-      document.getElementById('toast-icon').innerHTML = type === "success" ? '<i class="fa-solid fa-circle-check"></i>' : '<i class="fa-solid fa-circle-exclamation"></i>';
+      
+      icon.innerHTML = type === "success" ? '<i class="fa-solid fa-circle-check"></i>' : type === "error" ? '<i class="fa-solid fa-circle-exclamation"></i>' : '<i class="fa-solid fa-bell"></i>';
+      
       t.style.opacity = "1";
-      setTimeout(() => { t.style.opacity = "0"; }, 3000);
+      t.style.pointerEvents = "auto";
+      
+      if (window.toastTimeout) clearTimeout(window.toastTimeout);
+      window.toastTimeout = setTimeout(() => {
+        t.style.opacity = "0";
+        t.style.pointerEvents = "none";
+      }, 3000);
     }
 
     function toggleLoginTabs(mode) {
-      document.getElementById('form-login-box').classList.toggle('hidden', mode !== 'login');
-      document.getElementById('form-register-box').classList.toggle('hidden', mode === 'login');
+      const btnL = document.getElementById('tab-btn-login');
+      const btnR = document.getElementById('tab-btn-register');
+      const boxL = document.getElementById('form-login-box');
+      const boxR = document.getElementById('form-register-box');
+      
+      if (mode === 'login') {
+        btnL.className = "w-1/2 py-2 rounded-lg bg-slate-800 text-teal-400 transition-all";
+        btnR.className = "w-1/2 py-2 rounded-lg text-slate-400 transition-all";
+        boxL.classList.remove('hidden');
+        boxR.classList.add('hidden');
+      } else {
+        btnR.className = "w-1/2 py-2 rounded-lg bg-slate-800 text-teal-400 transition-all";
+        btnL.className = "w-1/2 py-2 rounded-lg text-slate-400 transition-all";
+        boxR.classList.remove('hidden');
+        boxL.classList.add('hidden');
+      }
     }
 
     function selectRegisterRole(role) {
@@ -265,23 +374,43 @@
     async function submitLogin() {
       const user = document.getElementById('login-username').value.trim();
       const pass = document.getElementById('login-pass').value.trim();
-      if (!user || !pass) return;
+      
+      if (!user || !pass) { showToast("Completa todos los campos", "error"); return; }
       document.getElementById('loading-overlay').classList.remove('hidden');
-      const res = await callBackend("loginUser", { username: user, password: pass });
-      document.getElementById('loading-overlay').classList.add('hidden');
-      if (res.success) saveSession(res.user);
-      else showToast(res.message, "error");
+      
+      try {
+        const res = await callBackend("loginUser", { username: user, password: pass });
+        document.getElementById('loading-overlay').classList.add('hidden');
+        if (res.success) {
+          saveSession(res.user);
+          showToast(`¡Bienvenido ${res.user.name}!`, "success");
+        } else {
+          showToast(res.message, "error");
+        }
+      } catch (e) {
+        document.getElementById('loading-overlay').classList.add('hidden');
+      }
     }
 
     async function submitRegister() {
       const user = document.getElementById('reg-username').value.trim();
       const pass = document.getElementById('reg-pass').value.trim();
-      if (!user || !pass) return;
+      
+      if (!user || !pass) { showToast("Completa todos los campos", "error"); return; }
       document.getElementById('loading-overlay').classList.remove('hidden');
-      const res = await callBackend("registerUser", { username: user, password: pass, role: registerSelectedRole });
-      document.getElementById('loading-overlay').classList.add('hidden');
-      if (res.success) saveSession(res.user);
-      else showToast(res.message, "error");
+
+      try {
+        const res = await callBackend("registerUser", { username: user, password: pass, role: registerSelectedRole });
+        document.getElementById('loading-overlay').classList.add('hidden');
+        if (res.success) {
+          saveSession(res.user);
+          showToast("Usuario guardado correctamente", "success");
+        } else {
+          showToast(res.message, "error");
+        }
+      } catch (e) {
+        document.getElementById('loading-overlay').classList.add('hidden');
+      }
     }
 
     function saveSession(user) {
@@ -290,110 +419,349 @@
       document.getElementById('login-overlay').classList.add('hidden');
       document.getElementById('header-user-name').innerText = sessionUser.name;
       document.getElementById('header-user-role').innerText = sessionUser.role;
+      
       syncWebpushrAttributes();
-      switchTab(sessionUser.role === 'Vendedor' ? 'view-my-orders' : 'view-orders');
+      const defaultTab = sessionUser.role === 'Vendedor' ? 'view-my-orders' : 'view-orders';
+      switchTab(defaultTab);
       initApp();
     }
 
     function checkLocalAuth() {
       const stored = localStorage.getItem('app_session_v4');
-      if (stored) saveSession(JSON.parse(stored));
-      else document.getElementById('loading-overlay').classList.add('hidden');
+      if (stored) {
+        sessionUser = JSON.parse(stored);
+        document.getElementById('login-overlay').classList.add('hidden');
+        document.getElementById('header-user-name').innerText = sessionUser.name;
+        document.getElementById('header-user-role').innerText = sessionUser.role;
+        
+        syncWebpushrAttributes();
+        const defaultTab = sessionUser.role === 'Vendedor' ? 'view-my-orders' : 'view-orders';
+        switchTab(defaultTab);
+        initApp();
+      } else {
+        document.getElementById('loading-overlay').classList.add('hidden');
+      }
     }
 
     function logout() { localStorage.removeItem('app_session_v4'); location.reload(); }
-    function initApp() { loadData(false); loadAutocompleteData(); setInterval(() => loadData(true), 3000); }
-    async function loadAutocompleteData() { autocompleteList = await callBackend("getProductAutocompleteList") || []; }
+
+    function initApp() {
+      loadData(false);
+      loadAutocompleteData();
+      startStreaming();
+    }
+
+    function startStreaming() {
+      setInterval(() => { loadData(true); }, 2500); 
+    }
+
+    async function loadAutocompleteData() {
+      try {
+        const list = await callBackend("getProductAutocompleteList");
+        autocompleteList = list || [];
+      } catch (e) { console.log("Error cargando autocompletado."); }
+    }
 
     async function loadData(silent) {
       if (!silent) document.getElementById('loading-overlay').classList.remove('hidden');
-      const data = await callBackend("getOrders");
-      document.getElementById('loading-overlay').classList.add('hidden');
-      if (ordersData.length > 0 && data?.length > 0) checkForNewAlerts(data);
-      ordersData = data || [];
-      renderOrders();
-    }
-
-    function renderOrders() {
-      const myCont = document.getElementById('my-orders-container');
-      const genCont = document.getElementById('orders-container');
-      myCont.innerHTML = ""; genCont.innerHTML = "";
-      
-      ordersData.forEach(o => {
-        const isOwner = (o.Vendedor === sessionUser.name);
-        const card = document.createElement('div');
-        card.className = "bg-white p-4 rounded-xl border border-slate-200 shadow-sm space-y-2 flex flex-col justify-between";
+      try {
+        const data = await callBackend("getOrders");
+        document.getElementById('loading-overlay').classList.add('hidden');
         
-        let actionsHtml = "";
-        if (sessionUser.role === "Almacenero" && o.Estado === "Pendiente") {
-          actionsHtml = `<div class="flex gap-2 pt-2"><button onclick="updateStatus(${o.rowNum}, 'Tomado')" class="flex-1 bg-amber-500 text-white font-bold text-xs py-1.5 rounded-lg">Tomar Pedido</button></div>`;
-        } else if (sessionUser.role === "Almacenero" && o.Estado === "Tomado") {
-          actionsHtml = `<div class="flex gap-2 pt-2"><button onclick="updateStatus(${o.rowNum}, 'Disponible')" class="flex-1 bg-teal-600 text-white font-bold text-xs py-1.5 rounded-lg">Listo / Disponible</button><button onclick="updateStatus(${o.rowNum}, 'Sin stock')" class="flex-1 bg-red-500 text-white font-bold text-xs py-1.5 rounded-lg">Sin Stock</button></div>`;
+        // Verificar si hay cambios en los pedidos para activar timbres/alertas in-app
+        if (ordersData.length > 0 && data && data.length > 0) {
+          checkForNewAlerts(data);
         }
-
-        let photoHtml = o.Foto && o.Foto.startsWith("http") ? `<div class="w-full mt-2"><img src="${o.Foto}" class="h-24 w-full object-cover rounded-lg border"></div>` : "";
-        let historyHtml = o.Historial ? `<div class="text-[10px] text-slate-400 mt-1 whitespace-pre-line border-t pt-1 border-slate-100">${o.Historial}</div>` : "";
-
-        card.innerHTML = `
-          <div>
-            <div class="flex justify-between font-bold text-xs mb-1">
-              <span class="text-slate-900">📦 ${o.Producto} (x${o.Cantidad})</span>
-              <span class="px-2 py-0.5 rounded-full text-[10px] ${o.Estado === 'Pendiente' ? 'bg-amber-100 text-amber-800' : o.Estado === 'Tomado' ? 'bg-blue-100 text-blue-800' : 'bg-teal-100 text-teal-800'}">${o.Estado}</span>
-            </div>
-            <p class="text-xs text-slate-500 font-medium">Pedido por: <b class="text-slate-700">${o.Vendedor}</b></p>
-            ${o.Notas ? `<p class="text-xs bg-slate-50 p-2 rounded-lg text-slate-600 mt-1 italic">"${o.Notas}"</p>` : ''}
-            ${photoHtml}
-            ${historyHtml}
-          </div>
-          ${actionsHtml}
-        `;
         
-        if (isOwner) myCont.appendChild(card.cloneNode(true));
-        if (activeFilter === 'all' || o.Estado === 'Pendiente') genCont.appendChild(card);
-      });
+        ordersData = data || [];
+        renderOrders();
+      } catch (err) {
+        document.getElementById('loading-overlay').classList.add('hidden');
+      }
     }
 
-    async function updateStatus(rowNum, status) {
-      document.getElementById('loading-overlay').classList.remove('hidden');
-      const res = await callBackend("updateOrder", { rowNum: rowNum, status: status, workerName: sessionUser.name, isEditingMode: false });
-      document.getElementById('loading-overlay').classList.add('hidden');
-      if (res.success) { showToast("Estado modificado.", "success"); loadData(true); }
-    }
-
+    // DISPARAR NOTIFICACIONES FLOTANTES TIPO PLAZA VEA (IN-APP)
     function triggerInAppNotification(title, message, imageUrl) {
       const alertBox = document.getElementById('inapp-notification');
-      document.getElementById('inapp-title').innerText = title;
-      document.getElementById('inapp-desc').innerText = message;
+      const textTitle = document.getElementById('inapp-title');
+      const textDesc = document.getElementById('inapp-desc');
       const imgContainer = document.getElementById('inapp-image-container');
-      if (imageUrl && imageUrl.startsWith("http")) {
-        document.getElementById('inapp-image').src = imageUrl;
+      const imgTarget = document.getElementById('inapp-image');
+
+      textTitle.innerText = title;
+      textDesc.innerText = message;
+
+      if (imageUrl && imageUrl.trim().toLowerCase().startsWith("http")) {
+        imgTarget.src = imageUrl;
         imgContainer.classList.remove('hidden');
-      } else { imgContainer.classList.add('hidden'); }
-      
+      } else {
+        imgContainer.classList.add('hidden');
+      }
+
+      // Emitir sonido nativo
+      try {
+        const audioCtx = new (window.AudioContext || window.webkitAudioContext)();
+        const oscillator = audioCtx.createOscillator();
+        const gainNode = audioCtx.createGain();
+        oscillator.type = 'sine';
+        oscillator.frequency.setValueAtTime(587.33, audioCtx.currentTime); // Nota D5
+        gainNode.gain.setValueAtTime(0.2, audioCtx.currentTime);
+        oscillator.connect(gainNode);
+        gainNode.connect(audioCtx.destination);
+        oscillator.start();
+        setTimeout(() => oscillator.stop(), 180);
+      } catch(e) {
+        console.log("No se pudo iniciar el canal de sonido:", e);
+      }
+
+      // Emitir vibración física
+      if ('vibrate' in navigator) {
+        navigator.vibrate([150, 80, 150]);
+      }
+
       alertBox.classList.add('activa');
-      setTimeout(() => { alertBox.classList.remove('activa'); }, 5000);
+      setTimeout(() => {
+        alertBox.classList.remove('activa');
+      }, 5000);
     }
 
+    // Comprobar cambios de estado para avisos
     function checkForNewAlerts(newData) {
+      // Para evitar repeticiones innecesarias de timbres
       const currentHash = JSON.stringify(newData.map(o => o.ID_Pedido + '-' + o.Estado));
       if (lastRenderedHash === currentHash) return;
       
       const oldMap = {};
       ordersData.forEach(o => { oldMap[o.ID_Pedido] = o.Estado; });
-      
+
       newData.forEach(newOrder => {
         const oldState = oldMap[newOrder.ID_Pedido];
+        
+        // 1. Si es un nuevo pedido (Solo alerta al almacenero)
         if (oldState === undefined && ordersData.length > 0) {
-          if (sessionUser?.role === 'Almacenero') {
-            triggerInAppNotification("🚨 ¡NUEVO PEDIDO!", `Producto ${newOrder.Producto} solicitado por ${newOrder.Vendedor}.`, newOrder.Foto);
+          if (sessionUser && sessionUser.role === 'Almacenero') {
+            triggerInAppNotification(
+              "🚨 ¡NUEVO PEDIDO EN COLA!",
+              `Producto ${newOrder.Producto} solicitado por ${newOrder.Vendedor}.`,
+              newOrder.Foto
+            );
           }
-        } else if (oldState !== undefined && oldState !== newOrder.Estado) {
-          if (sessionUser?.role === 'Vendedor' && newOrder.Vendedor === sessionUser.name) {
-            triggerInAppNotification("📢 ACTUALIZACIÓN", `Tu pedido de ${newOrder.Producto} cambió a: ${newOrder.Estado}`, newOrder.Foto);
+        }
+        // 2. Si el pedido cambia a completado (Solo alerta al vendedor)
+        else if (oldState !== undefined && oldState !== newOrder.Estado) {
+          if (newOrder.Estado === 'Disponible' || newOrder.Estado === 'Sin stock') {
+            if (sessionUser && sessionUser.role === 'Vendedor' && String(newOrder.Vendedor).trim().toLowerCase() === String(sessionUser.name).trim().toLowerCase()) {
+              triggerInAppNotification(
+                `📢 Pedido Listo: ${newOrder.Estado}`,
+                `Tu solicitud de "${newOrder.Producto}" ya fue resuelta por ${newOrder.Almacenero}.`,
+                newOrder.Foto
+              );
+            }
           }
         }
       });
+
       lastRenderedHash = currentHash;
+    }
+
+    function getBadgeColor(estado) {
+      if (estado === 'Por Tomar' || !estado) return "bg-amber-100 text-amber-800 animate-pulse";
+      if (estado === 'Tomado') return "bg-blue-100 text-blue-800";
+      if (estado === 'Encajado') return "bg-teal-100 text-teal-800";
+      if (estado === 'Chifa') return "bg-purple-100 text-purple-800";
+      if (estado === 'Disponible') return "bg-emerald-100 text-emerald-800";
+      if (estado === 'Sin stock') return "bg-red-100 text-red-800";
+      return "bg-slate-100 text-slate-700";
+    }
+
+    function buildCardHtml(order, enModoEdicionManual, isFinalizado, isPorTomar, badgeColor) {
+      let cantidadTexto = (order.Cantidad && order.Cantidad.toString().trim() !== "") ? order.Cantidad.toString().trim() : '1';
+      let notesTexto = (order.Notas && order.Notas.toString().trim() !== "" && order.Notas.toString().trim() !== "1") ? order.Notas.toString().trim() : "";
+
+      let historialHtml = "";
+      if (order.Historial_Cambios && order.Historial_Cambios.toString().trim() !== "") {
+        let lineas = order.Historial_Cambios.toString().split("\n");
+        let listaElementos = lineas.map(l => l.trim() ? `<li class="text-[10px] text-slate-500 list-none leading-relaxed">${l.trim()}</li>` : "").join("");
+        historialHtml = `<div class="mt-2 pt-2 border-t border-dashed border-slate-200 bg-slate-50/50 p-2 rounded-lg"><p class="text-[9px] font-bold text-slate-400 uppercase tracking-wider mb-1"><i class="fa-solid fa-clock-rotate-left mr-1"></i> Historial:</p><ul class="space-y-0.5 pl-1">${listaElementos}</ul></div>`;
+      }
+
+      let fotoHtml = (order.Foto && order.Foto.toString().trim().toLowerCase().startsWith("http")) ? `<img src="${order.Foto}" class="w-full h-32 object-cover rounded-lg mt-1.5 border border-slate-100">` : "";
+
+      let htmlContent = `
+        <div class="flex justify-between items-center text-[10px]">
+          <span class="font-bold text-slate-400">${order.ID_Pedido || 'PED'}</span>
+          <span class="px-2 py-0.5 rounded-full font-bold uppercase ${badgeColor}">${order.Estado || 'Por Tomar'}</span>
+        </div>
+        <div>
+          <p class="text-xs font-bold text-slate-800">${order.Producto || ''} <span class="text-teal-600 font-extrabold">(Cant: ${cantidadTexto})</span></p>
+          ${notesTexto ? `<p class="text-[11px] text-slate-500 bg-slate-50 p-2 rounded-lg mt-1 font-medium italic">"${notesTexto}"</p>` : ''}
+        </div>
+        ${fotoHtml}
+        <div class="flex justify-between text-[10px] text-slate-400 font-medium pt-1">
+          <span><i class="fa-solid fa-user mr-1"></i>${order.Vendedor || 'Vendedor'}</span>
+          <span>${order.Fecha_Hora || ''}</span>
+        </div>
+        ${historialHtml}
+      `;
+
+      if (order.Almacenero && order.Estado !== 'Por Tomar') {
+        htmlContent += `<div class="text-[10px] text-slate-600 font-semibold bg-slate-100/70 p-1.5 rounded-lg flex items-center gap-1 mt-1"><i class="fa-solid fa-boxes-packing text-blue-500"></i> Tomado por: ${order.Almacenero}</div>`;
+      }
+
+      if (sessionUser && sessionUser.role === 'Almacenero') {
+        if (isPorTomar) {
+          htmlContent += `<div class="pt-2"><button onclick="executeAction(${order.rowNum}, 'Tomado', this, false)" class="w-full bg-blue-600 hover:bg-blue-700 text-white py-2 rounded-xl text-xs font-bold transition-all shadow-md active:scale-[0.98]"><i class="fa-solid fa-hand mr-1"></i> Tomar Pedido</button></div>`;
+        } else if (!isFinalizado || enModoEdicionManual) {
+          htmlContent += `
+            <div class="pt-2 border-t border-slate-100 space-y-1.5 mt-1">
+              <div class="grid grid-cols-2 gap-2">
+                <button onclick="executeAction(${order.rowNum}, 'Encajado', this, ${enModoEdicionManual})" class="bg-teal-600 text-white py-1.5 rounded-lg text-xs font-bold active:scale-95">Encajado</button>
+                <button onclick="executeAction(${order.rowNum}, 'Chifa', this, ${enModoEdicionManual})" class="bg-purple-600 text-white py-1.5 rounded-lg text-xs font-bold active:scale-95">Chifa</button>
+                <button onclick="executeAction(${order.rowNum}, 'Disponible', this, ${enModoEdicionManual})" class="bg-emerald-600 text-white py-1.5 rounded-lg text-xs font-bold active:scale-95">Disponible</button>
+                <button onclick="executeAction(${order.rowNum}, 'Sin stock', this, ${enModoEdicionManual})" class="bg-red-600 text-white py-1.5 rounded-lg text-xs font-bold active:scale-95">Sin Stock</button>
+              </div>
+            </div>`;
+        }
+        if (isFinalizado && !enModoEdicionManual) {
+          htmlContent += `<div class="pt-1 flex justify-end"><button onclick="enableEditMode(${order.rowNum})" class="bg-slate-800 text-white px-3 py-1.5 rounded-lg text-[10px] font-bold"><i class="fa-solid fa-pen-to-square"></i> Editar Estado Cerrado</button></div>`;
+        }
+      }
+      return htmlContent;
+    }
+
+    function renderOrders() {
+      const containerGral = document.getElementById('orders-container');
+      const containerMy = document.getElementById('my-orders-container');
+      if (containerGral) containerGral.innerHTML = '';
+      if (containerMy) containerMy.innerHTML = '';
+      
+      const filteredGral = activeFilter === 'pending' ? ordersData.filter(o => o.Estado !== 'Disponible' && o.Estado !== 'Sin stock') : ordersData;
+      const filteredMy = ordersData.filter(o => String(o.Vendedor || '').trim().toLowerCase() === String((sessionUser ? sessionUser.name : '') || '').trim().toLowerCase());
+
+      if (containerGral) {
+        if (filteredGral.length === 0) {
+          containerGral.innerHTML = `<p class="text-center text-slate-400 py-8 text-xs">No hay pedidos en cola.</p>`;
+        } else {
+          filteredGral.forEach(order => {
+            const card = document.createElement('div');
+            card.className = "bg-white p-4 rounded-xl border border-slate-200 shadow-sm space-y-2.5 relative";
+            card.innerHTML = buildCardHtml(order, statesInEditMode[order.rowNum] === true, (order.Estado === 'Disponible' || order.Estado === 'Sin stock'), (order.Estado === 'Por Tomar' || !order.Estado), getBadgeColor(order.Estado));
+            containerGral.appendChild(card);
+          });
+        }
+      }
+      if (containerMy) {
+        if (filteredMy.length === 0) {
+          containerMy.innerHTML = `<p class="text-center text-slate-400 py-8 text-xs">Aún no has solicitado ningún pedido hoy.</p>`;
+        } else {
+          filteredMy.forEach(order => {
+            const card = document.createElement('div');
+            card.className = "bg-white p-4 rounded-xl border border-slate-200 shadow-sm space-y-2.5 relative border-l-4 border-l-teal-500";
+            card.innerHTML = buildCardHtml(order, statesInEditMode[order.rowNum] === true, (order.Estado === 'Disponible' || order.Estado === 'Sin stock'), (order.Estado === 'Por Tomar' || !order.Estado), getBadgeColor(order.Estado));
+            containerMy.appendChild(card);
+          });
+        }
+      }
+    }
+
+    function enableEditMode(rowNum) { statesInEditMode[rowNum] = true; renderOrders(); }
+
+    async function executeAction(rowNum, status, buttonElement, isEditing) {
+      if (buttonElement) { 
+        buttonElement.disabled = true; 
+        buttonElement.innerText = "Procesando..."; 
+      }
+      
+      document.getElementById('loading-overlay').classList.remove('hidden');
+      if (status === 'Disponible' || status === 'Sin stock') delete statesInEditMode[rowNum];
+
+      const localIndex = ordersData.findIndex(o => Number(o.rowNum) === Number(rowNum));
+      let backupState = "Por Tomar";
+      if (localIndex !== -1) {
+        backupState = ordersData[localIndex].Estado;
+        ordersData[localIndex].Estado = status;
+        ordersData[localIndex].Almacenero = sessionUser.name;
+        renderOrders();
+      }
+
+      try {
+        await callBackend("updateOrder", {
+          rowNum: Number(rowNum),
+          status: String(status),
+          workerName: String(sessionUser.name),
+          isEditingMode: (isEditing === true)
+        });
+        document.getElementById('loading-overlay').classList.add('hidden');
+        loadData(true);
+      } catch (err) {
+        document.getElementById('loading-overlay').classList.add('hidden');
+        showToast("Error al guardar estado nuevo.", "error");
+        if (localIndex !== -1) {
+          ordersData[localIndex].Estado = backupState;
+          renderOrders();
+        }
+      }
+    }
+
+    function filterAutocomplete(val) {
+      const box = document.getElementById('autocomplete-box');
+      if (!val) { box.classList.add('hidden'); return; }
+      const matched = autocompleteList.filter(i => i.toLowerCase().includes(val.toLowerCase()));
+      if (matched.length === 0) { box.classList.add('hidden'); return; }
+      box.innerHTML = '';
+      matched.forEach(item => {
+        const d = document.createElement('div');
+        d.className = "px-4 py-2 hover:bg-slate-100 text-xs cursor-pointer font-medium border-b text-slate-700";
+        d.innerText = item;
+        d.onclick = () => { 
+          document.getElementById('order-product').value = item; 
+          box.classList.add('hidden'); 
+        };
+        box.appendChild(d);
+      });
+      box.classList.remove('hidden');
+    }
+
+    async function submitOrder(e) {
+      e.preventDefault();
+      const p = document.getElementById('order-product').value.trim();
+      const q = document.getElementById('order-qty').value;
+      const n = document.getElementById('order-notes').value.trim();
+      document.getElementById('loading-overlay').classList.remove('hidden');
+
+      try {
+        await callBackend("addOrder", {
+          product: p,
+          qty: Number(q),
+          notes: n,
+          photoBase64: selectedPhotoBase64,
+          senderName: sessionUser.name,
+          senderAvatar: ""
+        });
+        resetForm(); 
+        switchTab('view-my-orders'); 
+        loadData(false);
+      } catch (e) {
+        document.getElementById('loading-overlay').classList.add('hidden');
+      }
+    }
+
+    function resetForm() { 
+      document.getElementById('order-form').reset(); 
+      selectedPhotoBase64 = ''; 
+      document.getElementById('image-preview-container').classList.add('hidden'); 
+    }
+
+    function previewImage(input) { 
+      if (input.files && input.files[0]) { 
+        const r = new FileReader(); 
+        r.onload = e => { 
+          selectedPhotoBase64 = e.target.result; 
+          document.getElementById('image-preview').src = selectedPhotoBase64; 
+          document.getElementById('image-preview-container').classList.remove('hidden'); 
+        }; 
+        r.readAsDataURL(input.files[0]); 
+      } 
     }
 
     function switchTab(id) {
@@ -401,12 +769,26 @@
       document.getElementById('view-orders').classList.add('hidden');
       document.getElementById('view-new-order').classList.add('hidden');
       document.getElementById(id).classList.remove('hidden');
+      
+      document.getElementById('tab-my-orders').className = id === 'view-my-orders' ? "flex flex-col items-center gap-1 text-teal-600" : "flex flex-col items-center gap-1 text-slate-400";
+      document.getElementById('tab-orders').className = id === 'view-orders' ? "flex flex-col items-center gap-1 text-teal-600" : "flex flex-col items-center gap-1 text-slate-400";
+      document.getElementById('tab-new').className = id === 'view-new-order' ? "flex flex-col items-center gap-1 text-teal-600" : "flex flex-col items-center gap-1 text-slate-400";
     }
-    function setFilter(f) { activeFilter = f; renderOrders(); }
-    function previewImage(input) { if (input.files && input.files[0]) { const reader = new FileReader(); reader.onload = function(e) { selectedPhotoBase64 = e.target.result; document.getElementById('image-preview').src = e.target.result; document.getElementById('image-preview-container').classList.remove('hidden'); }; reader.readAsDataURL(input.files[0]); } }
-    async function submitOrder(e) { e.preventDefault(); document.getElementById('loading-overlay').classList.remove('hidden'); await callBackend("addOrder", { product: document.getElementById('order-product').value, qty: document.getElementById('order-qty').value, notes: document.getElementById('order-notes').value, photoBase64: selectedPhotoBase64, senderName: sessionUser.name }); document.getElementById('order-form').reset(); selectedPhotoBase64 = ''; document.getElementById('image-preview-container').classList.add('hidden'); loadData(false); switchTab('view-my-orders'); }
-    function filterAutocomplete(v) { const box = document.getElementById('autocomplete-box'); if (!v) { box.classList.add('hidden'); return; } const matches = autocompleteList.filter(i => i.toLowerCase().includes(v.toLowerCase())); if(matches.length === 0){ box.classList.add('hidden'); return; } box.innerHTML = matches.map(m => `<div onclick="selectMatch('${m}')" class="px-4 py-2 hover:bg-slate-100 text-sm cursor-pointer">${m}</div>`).join(''); box.classList.remove('hidden'); }
-    function selectMatch(m) { document.getElementById('order-product').value = m; document.getElementById('autocomplete-box').classList.add('hidden'); }
+
+    function setFilter(f) {
+      activeFilter = f;
+      const btnAll = document.getElementById('filter-all');
+      const btnPending = document.getElementById('filter-pending');
+      
+      if (f === 'all') {
+        btnAll.className = "px-3 py-1 rounded-md bg-white text-slate-800 shadow-sm transition-all duration-200";
+        btnPending.className = "px-3 py-1 rounded-md text-slate-600 transition-all duration-200";
+      } else {
+        btnAll.className = "px-3 py-1 rounded-md text-slate-600 transition-all duration-200";
+        btnPending.className = "px-3 py-1 rounded-md bg-white text-slate-800 shadow-sm transition-all duration-200";
+      }
+      renderOrders();
+    }
   </script>
 </body>
 </html>
