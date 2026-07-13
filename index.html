@@ -339,6 +339,7 @@
         switchTab(defaultTab);
         initApp();
       } else {
+        // Si no hay sesión, ocultamos el loader para dejar ver la pantalla de login
         document.getElementById('loading-overlay').classList.add('hidden');
       }
     }
