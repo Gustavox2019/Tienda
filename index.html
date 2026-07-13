@@ -14,7 +14,7 @@
     body { -webkit-tap-highlight-color: transparent; }
     .btn-active { background-color: white !important; box-shadow: 0 1px 3px rgba(0,0,0,0.1); color: #1e293b !important; }
     
-    /* Efecto de notificación in-app similar a Plaza Vea */
+    /* Efecto de notificación in-app */
     .notificacion-emergente {
       transition: all 0.4s cubic-bezier(0.175, 0.885, 0.32, 1.275);
       transform: translateY(-150%) translateX(-50%);
@@ -26,7 +26,6 @@
 </head>
 <body class="bg-slate-100 font-sans text-slate-800 min-h-screen pb-20">
 
-  <!-- NOTIFICACIÓN ENRIQUECIDA FLOTANTE IN-APP (Estilo Plaza Vea) -->
   <div id="inapp-notification" class="notificacion-emergente fixed top-4 left-1/2 -translate-x-1/2 w-[92%] max-w-sm bg-slate-900 text-white p-4 rounded-2xl shadow-2xl z-50 border border-slate-700/80 flex flex-col gap-3 pointer-events-none">
     <div class="flex items-center gap-2.5">
       <div class="w-8 h-8 rounded-full bg-teal-500/15 flex items-center justify-center text-teal-400 border border-teal-500/30">
@@ -39,14 +38,13 @@
       <span class="text-[10px] text-slate-400">Ahora</span>
     </div>
     
-    <p id="inapp-desc" class="text-xs text-slate-300 leading-relaxed font-medium">Producto H2000-11 solicitado por Gustavo en el mostrador principal.</p>
+    <p id="inapp-desc" class="text-xs text-slate-300 leading-relaxed font-medium"></p>
     
     <div id="inapp-image-container" class="hidden w-full h-32 rounded-xl overflow-hidden border border-slate-700/50">
       <img id="inapp-image" class="w-full h-full object-cover" src="" alt="Foto Producto">
     </div>
   </div>
 
-  <!-- Login y Registro Integrado -->
   <div id="login-overlay" class="fixed inset-0 bg-slate-900 z-50 flex flex-col items-center justify-center p-6 text-white transition-all duration-300">
     <div class="w-full max-w-sm bg-slate-800 rounded-2xl p-6 shadow-2xl border border-slate-700 space-y-4">
       
@@ -59,7 +57,6 @@
         </div>
       </div>
 
-      <!-- Iniciar Sesión -->
       <div id="form-login-box" class="space-y-3">
         <input type="text" id="login-username" placeholder="Nombre de usuario" class="w-full px-4 py-2.5 bg-slate-900 border border-slate-700 rounded-xl focus:outline-none focus:border-teal-500 text-sm">
         <input type="password" id="login-pass" placeholder="Contraseña" class="w-full px-4 py-2.5 bg-slate-900 border border-slate-700 rounded-xl focus:outline-none focus:border-teal-500 text-sm">
@@ -68,7 +65,6 @@
         </button>
       </div>
 
-      <!-- Registro de Usuario -->
       <div id="form-register-box" class="space-y-3 hidden">
         <input type="text" id="reg-username" placeholder="Elige tu nombre de usuario" class="w-full px-4 py-2.5 bg-slate-900 border border-slate-700 rounded-xl focus:outline-none focus:border-teal-500 text-sm">
         <input type="password" id="reg-pass" placeholder="Asigna una Contraseña" class="w-full px-4 py-2.5 bg-slate-900 border border-slate-700 rounded-xl focus:outline-none focus:border-teal-500 text-sm">
@@ -89,19 +85,16 @@
     </div>
   </div>
 
-  <!-- Alerta Toast -->
   <div id="toast" class="fixed top-4 left-1/2 transform -translate-x-1/2 z-50 px-4 py-3 rounded-xl shadow-lg flex items-center gap-2 transition-all duration-300 opacity-0 pointer-events-none">
     <span id="toast-icon"></span>
     <span id="toast-text" class="font-medium text-sm"></span>
   </div>
 
-  <!-- Pantalla de carga -->
   <div id="loading-overlay" class="fixed inset-0 bg-slate-900/80 z-50 flex flex-col items-center justify-center text-white transition-opacity duration-300">
     <div class="animate-spin rounded-full h-12 w-12 border-4 border-teal-500 border-t-transparent"></div>
     <p class="mt-4 font-semibold text-sm">Procesando con la Base de Datos...</p>
   </div>
 
-  <!-- Cabecera -->
   <header class="bg-slate-900 text-white sticky top-0 z-40 shadow-md px-4 py-3 flex items-center justify-between">
     <div class="flex items-center gap-3">
       <div id="header-avatar" class="w-10 h-10 rounded-full bg-slate-700 border-2 border-teal-500 flex items-center justify-center text-slate-300">
@@ -117,10 +110,8 @@
     </div>
   </header>
 
-  <!-- Contenedor de Vistas -->
   <main class="max-w-md mx-auto p-4 space-y-4">
     
-    <!-- Vista 1: Mis Pedidos Solicitados -->
     <section id="view-my-orders" class="hidden space-y-4">
       <h2 class="text-base font-bold text-slate-900 flex items-center gap-2">
         <i class="fa-solid fa-user-tag text-teal-600"></i>Mis Pedidos Solicitados
@@ -128,7 +119,6 @@
       <div id="my-orders-container" class="space-y-3"></div>
     </section>
 
-    <!-- Vista 2: Cola Activa General de Trabajo -->
     <section id="view-orders" class="space-y-4">
       <div class="flex items-center justify-between">
         <h2 class="text-base font-bold text-slate-900 flex items-center gap-2">
@@ -142,7 +132,6 @@
       <div id="orders-container" class="space-y-3"></div>
     </section>
 
-    <!-- Vista 3: Formulario de Solicitud -->
     <section id="view-new-order" class="hidden space-y-4">
       <h2 class="text-base font-bold text-slate-900">
         <i class="fa-solid fa-cart-plus text-teal-600 mr-2"></i>Solicitar Producto
@@ -186,7 +175,6 @@
 
   </main>
 
-  <!-- Barra de Navegación Fija -->
   <nav class="fixed bottom-0 left-0 right-0 bg-white border-t border-slate-200 py-2 px-4 shadow-xl flex justify-around items-center z-40 max-w-md mx-auto rounded-t-2xl">
     <button onclick="switchTab('view-my-orders')" id="tab-my-orders" class="flex flex-col items-center gap-1 text-slate-400">
       <i class="fa-solid fa-user-clock text-lg"></i>
@@ -205,8 +193,7 @@
   </nav>
 
   <script>
-    // URL DE TU GOOGLE APPS SCRIPT (REEMPLÁZALA CON TU ENLACE /EXEC)
-    const API_URL = "https://script.google.com/macros/s/AKfycbwQLLxxNQD3RlNmPOZrnTtUJYUVJ93cc_aC3tx5FDj7D-PF6wLf1SnVawVRTNkE0311Iw/exec";
+    const API_URL = "https://script.google.com/macros/s/AKfycbx7eHJuGKxNxg_O-K2gIkm9e5s2kWr50/exec";
 
     let ordersData = [];
     let autocompleteList = []; 
@@ -215,11 +202,10 @@
     let selectedPhotoBase64 = '';
     let statesInEditMode = {}; 
     let registerSelectedRole = "Vendedor";
-    let lastRenderedHash = ""; // Para evitar alertas por bucles infinitos de render
+    let lastRenderedHash = ""; 
 
     window.addEventListener('DOMContentLoaded', () => { checkLocalAuth(); });
 
-    // Petición remota general (CORS-SAFE)
     async function callBackend(action, data = {}) {
       try {
         if (action === "getOrders" || action === "getProductAutocompleteList") {
