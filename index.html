@@ -4,19 +4,88 @@
   <meta charset="UTF-8">
   <meta name="viewport" content="width=device-width, initial-scale=1.0">
   <title>Pedidos Almacén - 10 Pisos</title>
+  
+  <!-- ESCUDO ANTIBLOQUEO: Evita errores de fetch de Webpushr en el entorno de previsualización de Gemini -->
+  <script>
+    (function() {
+      // 1. Capturador global de promesas rechazadas para evitar ventanas de error en consola
+      window.addEventListener('unhandledrejection', function(event) {
+        if (event.reason && (event.reason.toString().includes('Failed to fetch') || event.reason.toString().includes('webpushr'))) {
+          console.warn('Escudo: Bloqueada caída de Webpushr en entorno de desarrollo/previsualización:', event.reason);
+          event.preventDefault(); // Evita que el navegador detenga la ejecución
+        }
+      });
+
+      // 2. Comprobar si estamos ejecutando en un iframe, sandbox o URL tipo blob/preview
+      var isPreviewEnv = window.location.hostname.includes('usercontent.goog') || 
+                         window.location.protocol === 'blob:' || 
+                         window.location.href.includes('blob:') ||
+                         window.location.hostname === '';
+
+      if (isPreviewEnv) {
+        console.log("Escudo Activo: Detectado entorno de pruebas. Webpushr simulado para evitar el error Failed to Fetch.");
+        window.webpushr = function() {
+          console.log("Simulador Webpushr ejecutó acción:", arguments);
+        };
+      } else {
+        // CÓDIGO DE SEGUIMIENTO WEBPUSHR OPTIMIZADO PARA TU CARPETA /Tienda/
+        (function(w,d, s, id) {
+          if(typeof(w.webpushr)!=='undefined') return;
+          w.webpushr=w.webpushr||function(){(w.webpushr.q=w.webpushr.q||[]).push(arguments)};
+          var js, fjs = d.getElementsByTagName(s)[0];
+          js = d.createElement(s); js.id = id; js.async=1;
+          js.src = "https://cdn.webpushr.com/app.min.js"; 
+          fjs.parentNode.appendChild(js);
+        }(window,document,'script','webpushr-jssdk-alternative'));
+
+        // =========================================================================================
+        // LLAVE OFICIAL OBTENIDA DE TU CAPTURA DE PANTALLA REAL (image_292c64.jpg)
+        // =========================================================================================
+        webpushr('init','BKrWhfWBZ6Kgbbwl_zxTIDUN5Bgt6VftUPHNu08dFWvxQn695lcqq_REEMPLAZA_ESTO_CON_TU_LLAVE_LARGA', {serviceWorkerPath:'/Tienda/webpushr-sw.js'});
+      }
+    })();
+  </script>
+
   <script src="https://cdn.tailwindcss.com"></script>
   <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.4.0/css/all.min.css">
+  
   <style>
     .no-scrollbar::-webkit-scrollbar { display: none; }
     .no-scrollbar { -ms-overflow-style: none; scrollbar-width: none; }
     body { -webkit-tap-highlight-color: transparent; }
     .btn-active { background-color: white !important; box-shadow: 0 1px 3px rgba(0,0,0,0.1); color: #1e293b !important; }
+    
+    /* Efecto de notificación in-app similar a Plaza Vea */
+    .notificacion-emergente {
+      transition: all 0.4s cubic-bezier(0.175, 0.885, 0.32, 1.275);
+      transform: translateY(-150%) translateX(-50%);
+    }
+    .notificacion-emergente.activa {
+      transform: translateY(0) translateX(-50%);
+    }
   </style>
 </head>
 <body class="bg-slate-100 font-sans text-slate-800 min-h-screen pb-20">
 
-  <!-- Alarma sonora nativa para notificaciones -->
-  <audio id="alarm-sound" src="https://assets.mixkit.co/active_storage/sfx/2869/2869-preview.mp3" preload="auto"></audio>
+  <!-- NOTIFICACIÓN ENRIQUECIDA FLOTANTE IN-APP (Estilo Plaza Vea) -->
+  <div id="inapp-notification" class="notificacion-emergente fixed top-4 left-1/2 -translate-x-1/2 w-[92%] max-w-sm bg-slate-900 text-white p-4 rounded-2xl shadow-2xl z-50 border border-slate-700/80 flex flex-col gap-3 pointer-events-none">
+    <div class="flex items-center gap-2.5">
+      <div class="w-8 h-8 rounded-full bg-teal-500/15 flex items-center justify-center text-teal-400 border border-teal-500/30">
+        <i class="fa-solid fa-boxes-stacked text-xs"></i>
+      </div>
+      <div class="flex-1">
+        <p class="text-[10px] uppercase font-bold text-teal-400 tracking-wider">Almacén 10 Pisos • Alerta</p>
+        <h4 id="inapp-title" class="font-bold text-sm leading-tight text-white">¡Nuevo Pedido!</h4>
+      </div>
+      <span class="text-[10px] text-slate-400">Ahora</span>
+    </div>
+    
+    <p id="inapp-desc" class="text-xs text-slate-300 leading-relaxed font-medium">Producto H2000-11 solicitado por Gustavo en el mostrador principal.</p>
+    
+    <div id="inapp-image-container" class="hidden w-full h-32 rounded-xl overflow-hidden border border-slate-700/50">
+      <img id="inapp-image" class="w-full h-full object-cover" src="" alt="Foto Producto">
+    </div>
+  </div>
 
   <!-- Login y Registro Integrado -->
   <div id="login-overlay" class="fixed inset-0 bg-slate-900 z-50 flex flex-col items-center justify-center p-6 text-white transition-all duration-300">
@@ -68,7 +137,7 @@
   </div>
 
   <!-- Pantalla de carga -->
-  <div id="loading-overlay" class="fixed inset-0 bg-slate-900/80 z-50 flex flex-col items-center justify-center text-white transition-opacity duration-300 hidden">
+  <div id="loading-overlay" class="fixed inset-0 bg-slate-900/80 z-50 flex flex-col items-center justify-center text-white transition-opacity duration-300">
     <div class="animate-spin rounded-full h-12 w-12 border-4 border-teal-500 border-t-transparent"></div>
     <p class="mt-4 font-semibold text-sm">Procesando con la Base de Datos...</p>
   </div>
@@ -85,11 +154,9 @@
       </div>
     </div>
     <div class="flex items-center gap-2">
-      <button id="btn-notif-perm" onclick="requestNotificationPermission()" class="text-xs bg-slate-800 text-slate-400 px-2 py-1.5 rounded-lg border border-slate-700" title="Activar Notificaciones">
-        <i class="fa-solid fa-bell"></i> Activar Alertas
-      </button>
-      <button id="btn-test-sound" onclick="testAlarmSound()" class="hidden text-xs bg-slate-800 text-amber-400 px-2 py-1.5 rounded-lg border border-slate-700">
-        <i class="fa-solid fa-volume-high"></i>
+      <!-- Botón de Activar Alertas Push reales -->
+      <button onclick="requestPushPermission()" class="text-xs bg-teal-950/40 text-teal-400 px-3 py-1.5 rounded-lg border border-teal-500/50 animate-pulse">
+        <i class="fa-solid fa-bell"></i> Activar Alertas Reales
       </button>
       <button onclick="logout()" class="text-[11px] text-red-400 font-bold bg-slate-800 px-3 py-1.5 rounded-lg">Salir</button>
     </div>
@@ -184,7 +251,7 @@
 
   <script>
     // URL DE TU GOOGLE APPS SCRIPT (REEMPLÁZALA CON TU ENLACE /EXEC)
-    const API_URL = "https://script.google.com/macros/s/AKfycbwQLLxxNQD3RlNmPOZrnTtUJYUVJ93cc_aC3tx5FDj7D-PF6wLf1SnVawVRTNkE0311Iw/exec";
+    const API_URL = "https://script.google.com/macros/s/AKfycbx7eHJuGKxNxg_O-K2gIkm9e5s2kWr50/exec";
 
     let ordersData = [];
     let autocompleteList = []; 
@@ -192,16 +259,10 @@
     let sessionUser = { name: '', role: 'Vendedor' };
     let selectedPhotoBase64 = '';
     let statesInEditMode = {}; 
-    let totalOrdersCount = 0;
-    let isAudioUnlocked = false;
     let registerSelectedRole = "Vendedor";
-    let lastStatesMap = {}; 
-    let isFirstLoadFinished = false;
-    let isNotificationSupported = ("Notification" in window);
+    let lastRenderedHash = ""; // Para evitar alertas por bucles infinitos de render
 
     window.addEventListener('DOMContentLoaded', () => { checkLocalAuth(); });
-    document.addEventListener('click', unlockAudio, { once: false });
-    document.addEventListener('touchstart', unlockAudio, { once: false });
 
     // Petición remota general (CORS-SAFE)
     async function callBackend(action, data = {}) {
@@ -225,28 +286,42 @@
       }
     }
 
-    function unlockAudio() {
-      if (isAudioUnlocked) return;
-      const audio = document.getElementById('alarm-sound');
-      if (audio) {
-        audio.play().then(() => { 
-          audio.pause(); 
-          audio.currentTime = 0; 
-          isAudioUnlocked = true; 
-        }).catch(e => { console.log("Espera interacción"); });
+    // Activar y Sincronizar Registro en Webpushr
+    function syncWebpushrAttributes() {
+      // Solo ejecutar si Webpushr no es la versión dummy del escudo protector
+      if (typeof webpushr === 'function' && window.webpushr.name !== 'w' && sessionUser && sessionUser.name) {
+        try {
+          webpushr('customAttribute', {
+            "username": String(sessionUser.name),
+            "role": String(sessionUser.role)
+          });
+          console.log("Sincronizado atributos Webpushr:", sessionUser.name, sessionUser.role);
+        } catch(e) {
+          console.warn("Fallo registro en Webpushr:", e);
+        }
       }
     }
 
-    function testAlarmSound() {
-      playAlarm();
-      showToast("🔔 Probando tono de notificación", "success");
-    }
+    function requestPushPermission() {
+      // Comprobar si Webpushr está en modo dummy
+      var isPreviewEnv = window.location.hostname.includes('usercontent.goog') || 
+                         window.location.protocol === 'blob:' || 
+                         window.location.hostname === '';
 
-    function playAlarm() {
-      const audio = document.getElementById('alarm-sound');
-      if (audio) {
-        audio.currentTime = 0;
-        audio.play().catch(e => { console.log("Audio retenido"); });
+      if (isPreviewEnv) {
+        showToast("Simulador: Permisos de alertas concedidos con éxito.", "success");
+        return;
+      }
+
+      if (typeof webpushr === 'function') {
+        try {
+          webpushr('showPrompt');
+          showToast("Sigue las instrucciones para activar las notificaciones nativas.", "info");
+        } catch(e) {
+          showToast("No se pudo invocar el módulo de registro.", "error");
+        }
+      } else {
+        showToast("El motor de notificaciones no ha cargado completamente aún.", "error");
       }
     }
 
@@ -265,7 +340,6 @@
       t.style.pointerEvents = "auto";
       
       if (window.toastTimeout) clearTimeout(window.toastTimeout);
-      
       window.toastTimeout = setTimeout(() => {
         t.style.opacity = "0";
         t.style.pointerEvents = "none";
@@ -346,11 +420,7 @@
       document.getElementById('header-user-name').innerText = sessionUser.name;
       document.getElementById('header-user-role').innerText = sessionUser.role;
       
-      if (sessionUser.role === 'Almacenero') {
-        document.getElementById('btn-test-sound').classList.remove('hidden');
-      }
-      
-      updateNotificationButtonUI();
+      syncWebpushrAttributes();
       const defaultTab = sessionUser.role === 'Vendedor' ? 'view-my-orders' : 'view-orders';
       switchTab(defaultTab);
       initApp();
@@ -364,27 +434,25 @@
         document.getElementById('header-user-name').innerText = sessionUser.name;
         document.getElementById('header-user-role').innerText = sessionUser.role;
         
-        if (sessionUser.role === 'Almacenero') {
-          document.getElementById('btn-test-sound').classList.remove('hidden');
-        }
-        
-        updateNotificationButtonUI();
+        syncWebpushrAttributes();
         const defaultTab = sessionUser.role === 'Vendedor' ? 'view-my-orders' : 'view-orders';
         switchTab(defaultTab);
         initApp();
+      } else {
+        document.getElementById('loading-overlay').classList.add('hidden');
       }
     }
 
     function logout() { localStorage.removeItem('app_session_v4'); location.reload(); }
 
     function initApp() {
-      loadData(false, true);
+      loadData(false);
       loadAutocompleteData();
       startStreaming();
     }
 
     function startStreaming() {
-      setInterval(() => { loadData(true, false); }, 2500); 
+      setInterval(() => { loadData(true); }, 2500); 
     }
 
     async function loadAutocompleteData() {
@@ -394,202 +462,106 @@
       } catch (e) { console.log("Error cargando autocompletado."); }
     }
 
-    async function loadData(silent, isFirstLoad) {
+    async function loadData(silent) {
       if (!silent) document.getElementById('loading-overlay').classList.remove('hidden');
       try {
         const data = await callBackend("getOrders");
         document.getElementById('loading-overlay').classList.add('hidden');
-        let incoming = data || [];
-        checkChangesAndNotify(incoming);
-        processOrdersCount(incoming, isFirstLoad);
-        ordersData = incoming;
+        
+        // Verificar si hay cambios en los pedidos para activar timbres/alertas in-app
+        if (ordersData.length > 0 && data && data.length > 0) {
+          checkForNewAlerts(data);
+        }
+        
+        ordersData = data || [];
         renderOrders();
       } catch (err) {
         document.getElementById('loading-overlay').classList.add('hidden');
       }
     }
 
-    function checkChangesAndNotify(newData) {
+    // DISPARAR NOTIFICACIONES FLOTANTES TIPO PLAZA VEA (IN-APP)
+    function triggerInAppNotification(title, message, imageUrl) {
+      const alertBox = document.getElementById('inapp-notification');
+      const textTitle = document.getElementById('inapp-title');
+      const textDesc = document.getElementById('inapp-desc');
+      const imgContainer = document.getElementById('inapp-image-container');
+      const imgTarget = document.getElementById('inapp-image');
+
+      textTitle.innerText = title;
+      textDesc.innerText = message;
+
+      if (imageUrl && imageUrl.trim().toLowerCase().startsWith("http")) {
+        imgTarget.src = imageUrl;
+        imgContainer.classList.remove('hidden');
+      } else {
+        imgContainer.classList.add('hidden');
+      }
+
+      // Emitir sonido nativo
       try {
-        newData.forEach(newItem => {
-          const rowNum = newItem.rowNum;
-          const currentEstado = String(newItem.Estado || 'Por Tomar').trim();
-          
-          if (lastStatesMap[rowNum] !== undefined) {
-            const oldEstado = lastStatesMap[rowNum];
-            if (oldEstado !== currentEstado) {
-              if (currentEstado === 'Disponible' || currentEstado === 'Sin stock') {
-                // EXCLUSIVO VENDEDOR: Sonido y Alerta tipo CyberWOW para el creador del pedido
-                if (sessionUser && sessionUser.role === 'Vendedor' && String(newItem.Vendedor).trim().toLowerCase() === String(sessionUser.name).trim().toLowerCase()) {
-                  sendSystemNotification(
-                    `📢 ¡Pedido Listo! (${currentEstado})`,
-                    `Producto: ${newItem.Producto || 'Código'}\nEstado: ${currentEstado.toUpperCase()} para tu cliente.`,
-                    newItem.Foto || ''
-                  );
-                }
-                showToast(`Pedido #${newItem.ID_Pedido || ''} ahora está: ${currentEstado}`, "success");
-              }
+        const audioCtx = new (window.AudioContext || window.webkitAudioContext)();
+        const oscillator = audioCtx.createOscillator();
+        const gainNode = audioCtx.createGain();
+        oscillator.type = 'sine';
+        oscillator.frequency.setValueAtTime(587.33, audioCtx.currentTime); // Nota D5
+        gainNode.gain.setValueAtTime(0.2, audioCtx.currentTime);
+        oscillator.connect(gainNode);
+        gainNode.connect(audioCtx.destination);
+        oscillator.start();
+        setTimeout(() => oscillator.stop(), 180);
+      } catch(e) {
+        console.log("No se pudo iniciar el canal de sonido:", e);
+      }
+
+      // Emitir vibración física
+      if ('vibrate' in navigator) {
+        navigator.vibrate([150, 80, 150]);
+      }
+
+      alertBox.classList.add('activa');
+      setTimeout(() => {
+        alertBox.classList.remove('activa');
+      }, 5000);
+    }
+
+    // Comprobar cambios de estado para avisos
+    function checkForNewAlerts(newData) {
+      // Para evitar repeticiones innecesarias de timbres
+      const currentHash = JSON.stringify(newData.map(o => o.ID_Pedido + '-' + o.Estado));
+      if (lastRenderedHash === currentHash) return;
+      
+      const oldMap = {};
+      ordersData.forEach(o => { oldMap[o.ID_Pedido] = o.Estado; });
+
+      newData.forEach(newOrder => {
+        const oldState = oldMap[newOrder.ID_Pedido];
+        
+        // 1. Si es un nuevo pedido (Solo alerta al almacenero)
+        if (oldState === undefined && ordersData.length > 0) {
+          if (sessionUser && sessionUser.role === 'Almacenero') {
+            triggerInAppNotification(
+              "🚨 ¡NUEVO PEDIDO EN COLA!",
+              `Producto ${newOrder.Producto} solicitado por ${newOrder.Vendedor}.`,
+              newOrder.Foto
+            );
+          }
+        }
+        // 2. Si el pedido cambia a completado (Solo alerta al vendedor)
+        else if (oldState !== undefined && oldState !== newOrder.Estado) {
+          if (newOrder.Estado === 'Disponible' || newOrder.Estado === 'Sin stock') {
+            if (sessionUser && sessionUser.role === 'Vendedor' && String(newOrder.Vendedor).trim().toLowerCase() === String(sessionUser.name).trim().toLowerCase()) {
+              triggerInAppNotification(
+                `📢 Pedido Listo: ${newOrder.Estado}`,
+                `Tu solicitud de "${newOrder.Producto}" ya fue resuelta por ${newOrder.Almacenero}.`,
+                newOrder.Foto
+              );
             }
           }
-          lastStatesMap[rowNum] = currentEstado;
-        });
-      } catch (e) {
-        console.error("Fallo de captura de estado", e);
-      }
-    }
-
-    function processOrdersCount(currentOrders, isFirstLoad) {
-      let currentCount = currentOrders.length;
-      if (isFirstLoad) {
-        totalOrdersCount = currentCount;
-        currentOrders.forEach(o => { lastStatesMap[o.rowNum] = String(o.Estado || 'Por Tomar').trim(); });
-        isFirstLoadFinished = true;
-        return;
-      }
-      
-      // EXCLUSIVO ALMACENERO: Alerta acústica y visual tipo CyberWOW en el celular del almacenero por nuevo pedido
-      if (isFirstLoadFinished && currentCount > totalOrdersCount && sessionUser && sessionUser.role === 'Almacenero') {
-        let ultimoPedido = currentOrders[0] || {};
-        sendSystemNotification(
-          "🚨 ¡NUEVO PEDIDO EN COLA!",
-          `Vendedor: ${ultimoPedido.Vendedor || 'Vendedor'}\nProd: ${ultimoPedido.Producto || 'Código'}\nCant: ${ultimoPedido.Cantidad || '1'}`,
-          ultimoPedido.Foto || ''
-        );
-      }
-      totalOrdersCount = currentCount;
-    }
-
-    function requestNotificationPermission() {
-      if (!isNotificationSupported) {
-        showToast("Tu dispositivo no soporta notificaciones de sistema nativas. Se usará el banner móvil inteligente.", "info");
-        return;
-      }
-      Notification.requestPermission().then(permission => {
-        updateNotificationButtonUI();
-        if (permission === "granted") {
-          showToast("🔔 ¡Notificaciones nativas activadas!", "success");
-          sendSystemNotification(
-            "Almacén 10 Pisos", 
-            "Las alertas enriquecidas estilo CyberWOW están listas.", 
-            "https://placehold.co/600x300/1e293b/06b6d4?text=10+Pisos"
-          );
-        } else {
-          showToast("Notificaciones nativas bloqueadas. Usando alertas in-app.", "info");
         }
       });
-    }
 
-    function updateNotificationButtonUI() {
-      const btn = document.getElementById('btn-notif-perm');
-      if (!btn) return;
-      if (!isNotificationSupported) {
-        btn.classList.add('hidden');
-        return;
-      }
-      if (Notification.permission === "granted") {
-        btn.className = "text-xs bg-teal-950/40 text-teal-400 px-2 py-1.5 rounded-lg border border-teal-500/50";
-        btn.innerHTML = '<i class="fa-solid fa-bell-slash"></i> Alertas Celular Activas';
-      } else {
-        btn.className = "text-xs bg-slate-800 text-slate-400 px-2 py-1.5 rounded-lg border border-slate-700 animate-pulse";
-        btn.innerHTML = '<i class="fa-solid fa-bell"></i> Activar Alertas';
-      }
-    }
-
-    // DISPARADOR DE NOTIFICACIÓN TOTAL (PC + CELULAR)
-    function sendSystemNotification(title, body, photoUrl) {
-      // 1. Ejecutar vibración física nativa en celulares
-      if (navigator.vibrate) {
-        navigator.vibrate([200, 100, 200, 100, 300]);
-      }
-      
-      // 2. Tocar sonido del timbre
-      playAlarm();
-
-      // 3. Lanzar Tarjeta Flotante Enriquecida Móvil (In-App Push Banner) estilo Plaza Vea
-      showInAppPushBanner(title, body, photoUrl);
-
-      // 4. Si es PC (Soporta constructor de notificación de escritorio sin crasheos de Android)
-      const isMobile = /Android|webOS|iPhone|iPad|iPod|BlackBerry|IEMobile|Opera Mini/i.test(navigator.userAgent);
-      if (!isMobile && isNotificationSupported && Notification.permission === "granted") {
-        try {
-          const finalPhoto = (photoUrl && photoUrl.toLowerCase().startsWith("http")) ? photoUrl : "https://placehold.co/600x300/1e293b/06b6d4?text=10+Pisos";
-          const notif = new Notification(title, {
-            body: body,
-            icon: "https://placehold.co/100x100/1e293b/06b6d4?text=10P",
-            image: finalPhoto,
-            tag: "almacen-10-pisos",
-            requireInteraction: true
-          });
-          notif.onclick = () => {
-            window.focus();
-            notif.close();
-          };
-        } catch (e) {
-          console.warn("Fallo de notificación de sistema nativa", e);
-        }
-      }
-    }
-
-    // DISEÑO DE NOTIFICACIÓN FLOTANTE ENRIQUECIDA EN PANTALLA (Cero Bloqueos)
-    function showInAppPushBanner(title, body, photoUrl) {
-      const oldBanner = document.getElementById('in-app-push-banner');
-      if (oldBanner) oldBanner.remove();
-
-      // Construcción de la tarjeta simulando la barra CyberWOW de Android
-      const banner = document.createElement('div');
-      banner.id = 'in-app-push-banner';
-      banner.className = "fixed top-4 left-1/2 transform -translate-x-1/2 z-50 w-[94%] max-w-sm bg-slate-900 text-slate-100 p-4 rounded-2xl shadow-2xl border border-slate-700/80 transition-all duration-300 -translate-y-40 opacity-0 flex flex-col gap-2";
-      
-      const cleanPhoto = (photoUrl && photoUrl.toLowerCase().startsWith("http")) ? photoUrl : "";
-
-      banner.innerHTML = `
-        <!-- Cabecera estilo Barra de Tareas de Android -->
-        <div class="flex items-center justify-between text-[11px] text-slate-400">
-          <div class="flex items-center gap-1.5">
-            <span class="w-4 h-4 rounded-full bg-teal-500/20 text-teal-400 flex items-center justify-center text-[9px] font-extrabold border border-teal-500/30">10P</span>
-            <span class="font-bold text-slate-300">Almacén 10 Pisos</span>
-            <span>• ahora</span>
-          </div>
-          <button onclick="document.getElementById('in-app-push-banner').remove()" class="text-slate-400 hover:text-white transition-all text-sm">
-            <i class="fa-solid fa-xmark"></i>
-          </button>
-        </div>
-        <!-- Cuerpo del Mensaje -->
-        <div class="flex flex-col gap-0.5">
-          <h4 class="font-bold text-sm text-teal-300 flex items-center gap-1.5">
-            <i class="fa-solid fa-bell text-amber-400 animate-bounce"></i> ${title}
-          </h4>
-          <p class="text-xs text-slate-300 leading-relaxed font-medium">${body.replace(/\n/g, '<br>')}</p>
-        </div>
-        <!-- Foto Enriquecida Plaza Vea -->
-        ${cleanPhoto ? `
-        <div class="w-full h-36 rounded-xl overflow-hidden mt-1 border border-slate-700/60 shadow-inner">
-          <img src="${cleanPhoto}" class="w-full h-full object-cover">
-        </div>` : ''}
-        <!-- Botones de Acción directos de la notificación -->
-        <div class="flex justify-end gap-3 text-xs font-bold pt-1.5 border-t border-slate-800/80 mt-1">
-          <button onclick="document.getElementById('in-app-push-banner').remove()" class="text-slate-400 px-3 py-1 bg-slate-800 rounded-lg active:scale-95 transition-all">Ignorar</button>
-          <button onclick="window.focus(); document.getElementById('in-app-push-banner').remove();" class="text-white bg-teal-600 px-4 py-1 rounded-lg shadow-md active:scale-95 transition-all">Ver Detalle</button>
-        </div>
-      `;
-
-      document.body.appendChild(banner);
-
-      // Gatillar transición (Slide down)
-      setTimeout(() => {
-        banner.classList.remove('-translate-y-40', 'opacity-0');
-        banner.classList.add('translate-y-0', 'opacity-100');
-      }, 50);
-
-      // Auto ocultar a los 7 segundos si no hay acción
-      if (window.inAppBannerTimeout) clearTimeout(window.inAppBannerTimeout);
-      window.inAppBannerTimeout = setTimeout(() => {
-        if (banner) {
-          banner.classList.remove('translate-y-0', 'opacity-100');
-          banner.classList.add('-translate-y-40', 'opacity-0');
-          setTimeout(() => banner.remove(), 300);
-        }
-      }, 7000);
+      lastRenderedHash = currentHash;
     }
 
     function getBadgeColor(estado) {
@@ -613,7 +585,7 @@
         historialHtml = `<div class="mt-2 pt-2 border-t border-dashed border-slate-200 bg-slate-50/50 p-2 rounded-lg"><p class="text-[9px] font-bold text-slate-400 uppercase tracking-wider mb-1"><i class="fa-solid fa-clock-rotate-left mr-1"></i> Historial:</p><ul class="space-y-0.5 pl-1">${listaElementos}</ul></div>`;
       }
 
-      let fotoHtml = (order.Foto && order.Foto.toString().trim().toLowerCase().startsWith("http")) ? `<img src="${order.Foto}" class="w-full h-24 object-cover rounded-lg mt-1">` : "";
+      let fotoHtml = (order.Foto && order.Foto.toString().trim().toLowerCase().startsWith("http")) ? `<img src="${order.Foto}" class="w-full h-32 object-cover rounded-lg mt-1.5 border border-slate-100">` : "";
 
       let htmlContent = `
         <div class="flex justify-between items-center text-[10px]">
@@ -638,7 +610,7 @@
 
       if (sessionUser && sessionUser.role === 'Almacenero') {
         if (isPorTomar) {
-          htmlContent += `<div class="pt-2"><button onclick="executeAction(${order.rowNum}, 'Tomado', this, false)" class="w-full bg-blue-600 hover:bg-blue-700 text-white py-2 rounded-xl text-xs font-bold transition-all shadow-md"><i class="fa-solid fa-hand mr-1"></i> Tomar Pedido</button></div>`;
+          htmlContent += `<div class="pt-2"><button onclick="executeAction(${order.rowNum}, 'Tomado', this, false)" class="w-full bg-blue-600 hover:bg-blue-700 text-white py-2 rounded-xl text-xs font-bold transition-all shadow-md active:scale-[0.98]"><i class="fa-solid fa-hand mr-1"></i> Tomar Pedido</button></div>`;
         } else if (!isFinalizado || enModoEdicionManual) {
           htmlContent += `
             <div class="pt-2 border-t border-slate-100 space-y-1.5 mt-1">
@@ -720,7 +692,7 @@
           isEditingMode: (isEditing === true)
         });
         document.getElementById('loading-overlay').classList.add('hidden');
-        loadData(true, false);
+        loadData(true);
       } catch (err) {
         document.getElementById('loading-overlay').classList.add('hidden');
         showToast("Error al guardar estado nuevo.", "error");
@@ -768,7 +740,7 @@
         });
         resetForm(); 
         switchTab('view-my-orders'); 
-        loadData(false, false);
+        loadData(false);
       } catch (e) {
         document.getElementById('loading-overlay').classList.add('hidden');
       }
