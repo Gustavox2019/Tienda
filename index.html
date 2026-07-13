@@ -7,27 +7,23 @@
   
   <script>
     (function() {
-      // 1. Capturador global de promesas rechazadas para evitar ventanas de error en consola
       window.addEventListener('unhandledrejection', function(event) {
         if (event.reason && (event.reason.toString().includes('Failed to fetch') || event.reason.toString().includes('webpushr'))) {
-          console.warn('Escudo: Bloqueada caída de Webpushr en entorno de desarrollo/previsualización:', event.reason);
-          event.preventDefault(); // Evita que el navegador detenga la ejecución
+          console.warn('Escudo: Bloqueada caída de Webpushr en desarrollo:', event.reason);
+          event.preventDefault();
         }
       });
 
-      // 2. Comprobar si estamos ejecutando en un iframe, sandbox o URL tipo blob/preview
       var isPreviewEnv = window.location.hostname.includes('usercontent.goog') || 
                          window.location.protocol === 'blob:' || 
                          window.location.href.includes('blob:') ||
                          window.location.hostname === '';
 
       if (isPreviewEnv) {
-        console.log("Escudo Activo: Detectado entorno de pruebas. Webpushr simulado para evitar el error Failed to Fetch.");
-        window.webpushr = function() {
-          console.log("Simulador Webpushr ejecutó acción:", arguments);
-        };
+        console.log("Escudo Activo: Entorno de pruebas. Webpushr simulado.");
+        window.webpushr = function() { console.log("Simulador Webpushr:", arguments); };
       } else {
-        // CÓDIGO DE SEGUIMIENTO WEBPUSHR OPTIMIZADO PARA TU CARPETA /Tienda/
+        // CÓDIGO OFICIAL ADAPTADO PARA TU SUBTIENDA EN GITHUB PAGES
         (function(w,d, s, id) {
           if(typeof(w.webpushr)!=='undefined') return;
           w.webpushr=w.webpushr||function(){(w.webpushr.q=w.webpushr.q||[]).push(arguments)};
@@ -35,12 +31,10 @@
           js = d.createElement(s); js.id = id; js.async=1;
           js.src = "https://cdn.webpushr.com/app.min.js"; 
           fjs.parentNode.appendChild(js);
-        }(window,document,'script','webpushr-jssdk-alternative'));
+        }(window,document,'script','webpushr-jssdk'));
 
-        // =========================================================================================
-        // LLAVE REAL CONFIGURADA PARA TU CARPETA /Tienda/ (Evita fallos de Service Worker)
-        // =========================================================================================
-        webpushr('init','BATOQffJKXkKa6c6fL906YAYsGlukgdJp-ofN7nyQ5x-vrxjDPK4fnsjJ4XNKPEJZ4XDQU40cS_EO715Y3HVZok', {serviceWorkerPath:'/Tienda/webpushr-sw.js'});
+        // CONFIGURACIÓN CON TU LLAVE REAL EXTRAÍDA DE TU CONSOLA
+        webpushr('init','BI7aUvGQghqBNGCEP9sd0dPK94iuVU5ChZSC5vcOKl--FC1N1CDHwzmYrYvnSUXSgpjeD3xyTtHydPXbD85ybY8', { serviceWorkerPath: '/Tienda/webpushr-sw.js' });
       }
     })();
   </script>
@@ -54,7 +48,6 @@
     body { -webkit-tap-highlight-color: transparent; }
     .btn-active { background-color: white !important; box-shadow: 0 1px 3px rgba(0,0,0,0.1); color: #1e293b !important; }
     
-    /* Efecto de notificación in-app similar a Plaza Vea */
     .notificacion-emergente {
       transition: all 0.4s cubic-bezier(0.175, 0.885, 0.32, 1.275);
       transform: translateY(-150%) translateX(-50%);
@@ -77,9 +70,7 @@
       </div>
       <span class="text-[10px] text-slate-400">Ahora</span>
     </div>
-    
-    <p id="inapp-desc" class="text-xs text-slate-300 leading-relaxed font-medium">Producto H2000-11 solicitado por Gustavo en el mostrador principal.</p>
-    
+    <p id="inapp-desc" class="text-xs text-slate-300 leading-relaxed font-medium"></p>
     <div id="inapp-image-container" class="hidden w-full h-32 rounded-xl overflow-hidden border border-slate-700/50">
       <img id="inapp-image" class="w-full h-full object-cover" src="" alt="Foto Producto">
     </div>
@@ -87,7 +78,6 @@
 
   <div id="login-overlay" class="fixed inset-0 bg-slate-900 z-50 flex flex-col items-center justify-center p-6 text-white transition-all duration-300">
     <div class="w-full max-w-sm bg-slate-800 rounded-2xl p-6 shadow-2xl border border-slate-700 space-y-4">
-      
       <div class="text-center">
         <i class="fa-solid fa-boxes-stacked text-teal-400 text-3xl mb-1"></i>
         <h2 class="text-lg font-bold">Almacén 10 Pisos</h2>
@@ -100,28 +90,21 @@
       <div id="form-login-box" class="space-y-3">
         <input type="text" id="login-username" placeholder="Nombre de usuario" class="w-full px-4 py-2.5 bg-slate-900 border border-slate-700 rounded-xl focus:outline-none focus:border-teal-500 text-sm">
         <input type="password" id="login-pass" placeholder="Contraseña" class="w-full px-4 py-2.5 bg-slate-900 border border-slate-700 rounded-xl focus:outline-none focus:border-teal-500 text-sm">
-        <button onclick="submitLogin()" class="w-full bg-teal-600 hover:bg-teal-700 text-white font-bold py-2.5 rounded-xl text-sm active:scale-95 transition-all shadow-lg">
-          Entrar al Sistema
-        </button>
+        <button onclick="submitLogin()" class="w-full bg-teal-600 hover:bg-teal-700 text-white font-bold py-2.5 rounded-xl text-sm transition-all shadow-lg">Entrar al Sistema</button>
       </div>
 
       <div id="form-register-box" class="space-y-3 hidden">
-        <input type="text" id="reg-username" placeholder="Elige tu nombre de usuario" class="w-full px-4 py-2.5 bg-slate-900 border border-slate-700 rounded-xl focus:outline-none focus:border-teal-500 text-sm">
-        <input type="password" id="reg-pass" placeholder="Asigna una Contraseña" class="w-full px-4 py-2.5 bg-slate-900 border border-slate-700 rounded-xl focus:outline-none focus:border-teal-500 text-sm">
-        
+        <input type="text" id="reg-username" placeholder="Elige usuario" class="w-full px-4 py-2.5 bg-slate-900 border border-slate-700 rounded-xl focus:outline-none focus:border-teal-500 text-sm">
+        <input type="password" id="reg-pass" placeholder="Contraseña" class="w-full px-4 py-2.5 bg-slate-900 border border-slate-700 rounded-xl focus:outline-none focus:border-teal-500 text-sm">
         <div>
-          <label class="block text-[10px] uppercase font-bold text-slate-400 mb-1 pl-1">Selecciona tu área:</label>
+          <label class="block text-[10px] uppercase font-bold text-slate-400 mb-1 pl-1">Área:</label>
           <div class="grid grid-cols-2 gap-2">
-            <button onclick="selectRegisterRole('Vendedor')" id="reg-role-v" class="py-2 rounded-lg border border-teal-500 bg-teal-900/30 text-teal-400 text-xs font-bold text-center">Vendedor</button>
-            <button onclick="selectRegisterRole('Almacenero')" id="reg-role-a" class="py-2 rounded-lg border border-slate-700 text-slate-400 text-xs font-bold text-center">Almacenero</button>
+            <button type="button" onclick="selectRegisterRole('Vendedor')" id="reg-role-v" class="py-2 rounded-lg border border-teal-500 bg-teal-900/30 text-teal-400 text-xs font-bold text-center">Vendedor</button>
+            <button type="button" onclick="selectRegisterRole('Almacenero')" id="reg-role-a" class="py-2 rounded-lg border border-slate-700 text-slate-400 text-xs font-bold text-center">Almacenero</button>
           </div>
         </div>
-
-        <button onclick="submitRegister()" class="w-full bg-emerald-600 hover:bg-emerald-700 text-white font-bold py-2.5 rounded-xl text-sm active:scale-95 transition-all shadow-lg">
-          Registrar Cuenta
-        </button>
+        <button onclick="submitRegister()" class="w-full bg-emerald-600 hover:bg-emerald-700 text-white font-bold py-2.5 rounded-xl text-sm transition-all shadow-lg">Registrar Cuenta</button>
       </div>
-
     </div>
   </div>
 
@@ -132,12 +115,12 @@
 
   <div id="loading-overlay" class="fixed inset-0 bg-slate-900/80 z-50 flex flex-col items-center justify-center text-white transition-opacity duration-300">
     <div class="animate-spin rounded-full h-12 w-12 border-4 border-teal-500 border-t-transparent"></div>
-    <p class="mt-4 font-semibold text-sm">Procesando con la Base de Datos...</p>
+    <p class="mt-4 font-semibold text-sm">Cargando...</p>
   </div>
 
   <header class="bg-slate-900 text-white sticky top-0 z-40 shadow-md px-4 py-3 flex items-center justify-between">
     <div class="flex items-center gap-3">
-      <div id="header-avatar" class="w-10 h-10 rounded-full bg-slate-700 border-2 border-teal-500 flex items-center justify-center text-slate-300">
+      <div class="w-10 h-10 rounded-full bg-slate-700 border-2 border-teal-500 flex items-center justify-center text-slate-300">
         <i class="fa-solid fa-user"></i>
       </div>
       <div>
@@ -147,104 +130,78 @@
     </div>
     <div class="flex items-center gap-2">
       <button onclick="requestPushPermission()" class="text-xs bg-teal-950/40 text-teal-400 px-3 py-1.5 rounded-lg border border-teal-500/50 animate-pulse">
-        <i class="fa-solid fa-bell"></i> Activar Alertas Reales
+        <i class="fa-solid fa-bell"></i> Activar Alertas
       </button>
       <button onclick="logout()" class="text-[11px] text-red-400 font-bold bg-slate-800 px-3 py-1.5 rounded-lg">Salir</button>
     </div>
   </header>
 
   <main class="max-w-md mx-auto p-4 space-y-4">
-    
     <section id="view-my-orders" class="hidden space-y-4">
-      <h2 class="text-base font-bold text-slate-900 flex items-center gap-2">
-        <i class="fa-solid fa-user-tag text-teal-600"></i>Mis Pedidos Solicitados
-      </h2>
+      <h2 class="text-base font-bold text-slate-900 flex items-center gap-2"><i class="fa-solid fa-user-tag text-teal-600"></i>Mis Pedidos</h2>
       <div id="my-orders-container" class="space-y-3"></div>
     </section>
 
     <section id="view-orders" class="space-y-4">
       <div class="flex items-center justify-between">
-        <h2 class="text-base font-bold text-slate-900 flex items-center gap-2">
-          <i class="fa-solid fa-list-check text-teal-600"></i>Cola Activa General
-        </h2>
-        <div class="flex bg-slate-200 p-1 rounded-lg text-[10px] font-bold shadow-inner">
-          <button id="filter-all" onclick="setFilter('all')" class="px-3 py-1 rounded-md bg-white text-slate-800 shadow-sm transition-all duration-200">Todos</button>
-          <button id="filter-pending" onclick="setFilter('pending')" class="px-3 py-1 rounded-md text-slate-600 transition-all duration-200">Por Atender</button>
+        <h2 class="text-base font-bold text-slate-900 flex items-center gap-2"><i class="fa-solid fa-list-check text-teal-600"></i>Cola General</h2>
+        <div class="flex bg-slate-200 p-1 rounded-lg text-[10px] font-bold">
+          <button id="filter-all" onclick="setFilter('all')" class="px-3 py-1 rounded-md bg-white text-slate-800 shadow-sm">Todos</button>
+          <button id="filter-pending" onclick="setFilter('pending')" class="px-3 py-1 rounded-md text-slate-600">Por Atender</button>
         </div>
       </div>
       <div id="orders-container" class="space-y-3"></div>
     </section>
 
     <section id="view-new-order" class="hidden space-y-4">
-      <h2 class="text-base font-bold text-slate-900">
-        <i class="fa-solid fa-cart-plus text-teal-600 mr-2"></i>Solicitar Producto
-      </h2>
-      <form id="order-form" onsubmit="submitOrder(event)" class="bg-white rounded-2xl p-5 shadow-sm border border-slate-200/80 space-y-4">
-        
+      <h2 class="text-base font-bold text-slate-900"><i class="fa-solid fa-cart-plus text-teal-600 mr-2"></i>Pedir Producto</h2>
+      <form id="order-form" onsubmit="submitOrder(event)" class="bg-white rounded-2xl p-5 shadow-sm border border-slate-200 space-y-4">
         <div class="relative">
-          <label class="block text-xs font-bold uppercase tracking-wider text-slate-500 mb-1">Producto o Código</label>
-          <input type="text" id="order-product" required placeholder="Buscar código..." oninput="filterAutocomplete(this.value)" autocomplete="off" class="w-full px-4 py-2.5 rounded-xl bg-slate-50 border border-slate-200 focus:outline-none focus:border-teal-500 text-sm font-medium">
+          <label class="block text-xs font-bold text-slate-500 mb-1">Producto / Código</label>
+          <input type="text" id="order-product" required placeholder="Código..." oninput="filterAutocomplete(this.value)" autocomplete="off" class="w-full px-4 py-2.5 rounded-xl bg-slate-50 border border-slate-200 text-sm">
           <div id="autocomplete-box" class="absolute left-0 right-0 top-full mt-1 bg-white border border-slate-200 rounded-xl shadow-xl max-h-40 overflow-y-auto z-50 hidden no-scrollbar"></div>
         </div>
-
         <div>
-          <label class="block text-xs font-bold uppercase tracking-wider text-slate-500 mb-1">Cantidad</label>
-          <input type="number" id="order-qty" required min="1" value="1" class="w-full px-4 py-2.5 rounded-xl bg-slate-50 border border-slate-200 text-sm font-medium">
+          <label class="block text-xs font-bold text-slate-500 mb-1">Cantidad</label>
+          <input type="number" id="order-qty" required min="1" value="1" class="w-full px-4 py-2.5 rounded-xl bg-slate-50 border border-slate-200 text-sm">
         </div>
-
         <div>
-          <label class="block text-xs font-bold uppercase tracking-wider text-slate-500 mb-1">Detalles Libres</label>
-          <textarea id="order-notes" rows="2" placeholder="Indicaciones libres..." class="w-full px-4 py-2.5 rounded-xl bg-slate-50 border border-slate-200 text-sm font-medium"></textarea>
+          <label class="block text-xs font-bold text-slate-500 mb-1">Notas adicionales</label>
+          <textarea id="order-notes" rows="2" class="w-full px-4 py-2.5 rounded-xl bg-slate-50 border border-slate-200 text-sm"></textarea>
         </div>
-
         <div>
-          <label class="block text-xs font-bold uppercase tracking-wider text-slate-500 mb-1">Foto Opcional</label>
+          <label class="block text-xs font-bold text-slate-500 mb-1">Foto (Opcional)</label>
           <div class="flex items-center gap-3">
-            <button type="button" onclick="document.getElementById('camera-input').click()" class="py-2 px-4 bg-slate-100 rounded-xl text-xs font-bold text-slate-600 flex items-center gap-2">
-              <i class="fa-solid fa-camera"></i> Cámara
-            </button>
+            <button type="button" onclick="document.getElementById('camera-input').click()" class="py-2 px-4 bg-slate-100 rounded-xl text-xs font-bold text-slate-600"><i class="fa-solid fa-camera"></i> Cámara</button>
             <input type="file" id="camera-input" accept="image/*" capture="environment" class="hidden" onchange="previewImage(this)">
-            <div id="image-preview-container" class="hidden w-10 h-10 rounded-lg overflow-hidden border">
-              <img id="image-preview" class="w-full h-full object-cover">
-            </div>
+            <div id="image-preview-container" class="hidden w-10 h-10 rounded-lg overflow-hidden border"><img id="image-preview" class="w-full h-full object-cover"></div>
           </div>
         </div>
-
-        <button type="submit" class="w-full bg-teal-600 hover:bg-teal-700 py-3 text-white font-bold rounded-xl text-sm transition-all active:scale-95 shadow-md">
-          Enviar a los 10 Pisos
-        </button>
+        <button type="submit" class="w-full bg-teal-600 text-white font-bold py-3 rounded-xl text-sm shadow-md">Enviar Pedido</button>
       </form>
     </section>
-
   </main>
 
   <nav class="fixed bottom-0 left-0 right-0 bg-white border-t border-slate-200 py-2 px-4 shadow-xl flex justify-around items-center z-40 max-w-md mx-auto rounded-t-2xl">
     <button onclick="switchTab('view-my-orders')" id="tab-my-orders" class="flex flex-col items-center gap-1 text-slate-400">
-      <i class="fa-solid fa-user-clock text-lg"></i>
-      <span class="text-[9px] font-bold">Mis Pedidos</span>
+      <i class="fa-solid fa-user-clock text-lg"></i><span class="text-[9px] font-bold">Mis Pedidos</span>
     </button>
     <button onclick="switchTab('view-orders')" id="tab-orders" class="flex flex-col items-center gap-1 text-slate-400">
-      <i class="fa-solid fa-clipboard-list text-lg"></i>
-      <span class="text-[9px] font-bold">Cola Gral.</span>
+      <i class="fa-solid fa-clipboard-list text-lg"></i><span class="text-[9px] font-bold">Cola Gral.</span>
     </button>
     <button onclick="switchTab('view-new-order')" id="tab-new" class="flex flex-col items-center gap-1 text-slate-400">
-      <div class="w-9 h-9 rounded-full bg-teal-600 text-white flex items-center justify-center shadow-md -mt-4 border-2 border-white">
-        <i class="fa-solid fa-plus text-xs"></i>
-      </div>
+      <div class="w-9 h-9 rounded-full bg-teal-600 text-white flex items-center justify-center shadow-md -mt-4 border-2 border-white"><i class="fa-solid fa-plus text-xs"></i></div>
       <span class="text-[9px] font-bold">Pedir</span>
     </button>
   </nav>
 
   <script>
-    // URL DE TU GOOGLE APPS SCRIPT (REEMPLÁZALA CON TU ENLACE /EXEC)
     const API_URL = "https://script.google.com/macros/s/AKfycbwQLLxxNQD3RlNmPOZrnTtUJYUVJ93cc_aC3tx5FDj7D-PF6wLf1SnVawVRTNkE0311Iw/exec";
     let ordersData = [];
     let autocompleteList = []; 
     let activeFilter = 'all';
     let sessionUser = { name: '', role: 'Vendedor' };
     let selectedPhotoBase64 = '';
-    let statesInEditMode = {};
-    let registerSelectedRole = "Vendedor";
     let lastRenderedHash = ""; 
 
     window.addEventListener('DOMContentLoaded', () => { checkLocalAuth(); });
@@ -256,87 +213,46 @@
           return await res.json();
         } else {
           data.action = action;
-          const res = await fetch(API_URL, {
-            method: "POST",
-            body: JSON.stringify(data)
-          });
+          const res = await fetch(API_URL, { method: "POST", body: JSON.stringify(data) });
           return await res.json();
         }
       } catch (err) {
-        console.error("Fallo comunicación:", err);
-        showToast("Error de conexión con la base de datos.", "error");
+        showToast("Error de comunicación.", "error");
         document.getElementById('loading-overlay').classList.add('hidden');
         throw err;
       }
     }
 
     function syncWebpushrAttributes() {
-      if (typeof webpushr === 'function' && window.webpushr.name !== 'w' && sessionUser && sessionUser.name) {
+      if (typeof webpushr === 'function' && window.webpushr.name !== 'w' && sessionUser?.name) {
         try {
-          webpushr('customAttribute', {
-            "username": String(sessionUser.name),
-            "role": String(sessionUser.role)
-          });
-          console.log("Sincronizado atributos Webpushr:", sessionUser.name, sessionUser.role);
-        } catch(e) {
-          console.warn("Fallo registro en Webpushr:", e);
-        }
+          webpushr('customAttribute', { "username": String(sessionUser.name), "role": String(sessionUser.role) });
+        } catch(e) { console.warn(e); }
       }
     }
 
     function requestPushPermission() {
-      var isPreviewEnv = window.location.hostname.includes('usercontent.goog') || window.location.protocol === 'blob:' || window.location.hostname === '';
-      if (isPreviewEnv) {
-        showToast("Simulador: Permisos de alertas concedidos con éxito.", "success");
-        return;
-      }
       if (typeof webpushr === 'function') {
-        try {
-          webpushr('showPrompt');
-          showToast("Sigue las instrucciones para activar las notificaciones nativas.", "info");
-        } catch(e) {
-          showToast("No se pudo invocar el módulo de registro.", "error");
-        }
+        webpushr('showPrompt');
+        showToast("Sigue las instrucciones en pantalla.", "info");
       } else {
-        showToast("El motor de notificaciones no ha cargado completamente aún.", "error");
+        showToast("Cargando motor de notificaciones...", "error");
       }
     }
 
     function showToast(m, type) {
       const t = document.getElementById('toast');
-      const txt = document.getElementById('toast-text');
-      const icon = document.getElementById('toast-icon');
-      txt.innerText = m;
+      document.getElementById('toast-text').innerText = m;
       t.className = "fixed top-4 left-1/2 transform -translate-x-1/2 z-50 px-4 py-3 rounded-xl shadow-lg flex items-center gap-2 transition-all duration-300 border " + 
         (type === "success" ? "bg-emerald-100 text-emerald-800 border-emerald-200" : type === "error" ? "bg-red-100 text-red-800 border-red-200" : "bg-blue-100 text-blue-800 border-blue-200");
-      icon.innerHTML = type === "success" ? '<i class="fa-solid fa-circle-check"></i>' : type === "error" ? '<i class="fa-solid fa-circle-exclamation"></i>' : '<i class="fa-solid fa-bell"></i>';
-      
+      document.getElementById('toast-icon').innerHTML = type === "success" ? '<i class="fa-solid fa-circle-check"></i>' : '<i class="fa-solid fa-circle-exclamation"></i>';
       t.style.opacity = "1";
-      t.style.pointerEvents = "auto";
-      
-      if (window.toastTimeout) clearTimeout(window.toastTimeout);
-      window.toastTimeout = setTimeout(() => {
-        t.style.opacity = "0";
-        t.style.pointerEvents = "none";
-      }, 3000);
+      setTimeout(() => { t.style.opacity = "0"; }, 3000);
     }
 
     function toggleLoginTabs(mode) {
-      const btnL = document.getElementById('tab-btn-login');
-      const btnR = document.getElementById('tab-btn-register');
-      const boxL = document.getElementById('form-login-box');
-      const boxR = document.getElementById('form-register-box');
-      if (mode === 'login') {
-        btnL.className = "w-1/2 py-2 rounded-lg bg-slate-800 text-teal-400 transition-all";
-        btnR.className = "w-1/2 py-2 rounded-lg text-slate-400 transition-all";
-        boxL.classList.remove('hidden');
-        boxR.classList.add('hidden');
-      } else {
-        btnR.className = "w-1/2 py-2 rounded-lg bg-slate-800 text-teal-400 transition-all";
-        btnL.className = "w-1/2 py-2 rounded-lg text-slate-400 transition-all";
-        boxR.classList.remove('hidden');
-        boxL.classList.add('hidden');
-      }
+      document.getElementById('form-login-box').classList.toggle('hidden', mode !== 'login');
+      document.getElementById('form-register-box').classList.toggle('hidden', mode === 'login');
     }
 
     function selectRegisterRole(role) {
@@ -348,39 +264,23 @@
     async function submitLogin() {
       const user = document.getElementById('login-username').value.trim();
       const pass = document.getElementById('login-pass').value.trim();
-      if (!user || !pass) { showToast("Completa todos los campos", "error"); return; }
+      if (!user || !pass) return;
       document.getElementById('loading-overlay').classList.remove('hidden');
-      try {
-        const res = await callBackend("loginUser", { username: user, password: pass });
-        document.getElementById('loading-overlay').classList.add('hidden');
-        if (res.success) {
-          saveSession(res.user);
-          showToast(`¡Bienvenido ${res.user.name}!`, "success");
-        } else {
-          showToast(res.message, "error");
-        }
-      } catch (e) {
-        document.getElementById('loading-overlay').classList.add('hidden');
-      }
+      const res = await callBackend("loginUser", { username: user, password: pass });
+      document.getElementById('loading-overlay').classList.add('hidden');
+      if (res.success) saveSession(res.user);
+      else showToast(res.message, "error");
     }
 
     async function submitRegister() {
       const user = document.getElementById('reg-username').value.trim();
       const pass = document.getElementById('reg-pass').value.trim();
-      if (!user || !pass) { showToast("Completa todos los campos", "error"); return; }
+      if (!user || !pass) return;
       document.getElementById('loading-overlay').classList.remove('hidden');
-      try {
-        const res = await callBackend("registerUser", { username: user, password: pass, role: registerSelectedRole });
-        document.getElementById('loading-overlay').classList.add('hidden');
-        if (res.success) {
-          saveSession(res.user);
-          showToast("Usuario guardado correctamente", "success");
-        } else {
-          showToast(res.message, "error");
-        }
-      } catch (e) {
-        document.getElementById('loading-overlay').classList.add('hidden');
-      }
+      const res = await callBackend("registerUser", { username: user, password: pass, role: registerSelectedRole });
+      document.getElementById('loading-overlay').classList.add('hidden');
+      if (res.success) saveSession(res.user);
+      else showToast(res.message, "error");
     }
 
     function saveSession(user) {
@@ -390,108 +290,48 @@
       document.getElementById('header-user-name').innerText = sessionUser.name;
       document.getElementById('header-user-role').innerText = sessionUser.role;
       syncWebpushrAttributes();
-      const defaultTab = sessionUser.role === 'Vendedor' ? 'view-my-orders' : 'view-orders';
-      switchTab(defaultTab);
+      switchTab(sessionUser.role === 'Vendedor' ? 'view-my-orders' : 'view-orders');
       initApp();
     }
 
     function checkLocalAuth() {
       const stored = localStorage.getItem('app_session_v4');
-      if (stored) {
-        sessionUser = JSON.parse(stored);
-        document.getElementById('login-overlay').classList.add('hidden');
-        document.getElementById('header-user-name').innerText = sessionUser.name;
-        document.getElementById('header-user-role').innerText = sessionUser.role;
-        syncWebpushrAttributes();
-        const defaultTab = sessionUser.role === 'Vendedor' ? 'view-my-orders' : 'view-orders';
-        switchTab(defaultTab);
-        initApp();
-      } else {
-        document.getElementById('loading-overlay').classList.add('hidden');
-      }
+      if (stored) saveSession(JSON.parse(stored));
+      else document.getElementById('loading-overlay').classList.add('hidden');
     }
 
-    function logout() {
-      localStorage.removeItem('app_session_v4');
-      location.reload();
-    }
-
-    function initApp() {
-      loadData(false);
-      loadAutocompleteData();
-      startStreaming();
-    }
-
-    function startStreaming() {
-      setInterval(() => { loadData(true); }, 2500);
-    }
-
-    async function loadAutocompleteData() {
-      try {
-        const list = await callBackend("getProductAutocompleteList");
-        autocompleteList = list || [];
-      } catch (e) { console.log("Error cargando autocompletado."); }
-    }
+    function logout() { localStorage.removeItem('app_session_v4'); location.reload(); }
+    function initApp() { loadData(false); loadAutocompleteData(); setInterval(() => loadData(true), 3000); }
+    async function loadAutocompleteData() { autocompleteList = await callBackend("getProductAutocompleteList") || []; }
 
     async function loadData(silent) {
       if (!silent) document.getElementById('loading-overlay').classList.remove('hidden');
-      try {
-        const data = await callBackend("getOrders");
-        document.getElementById('loading-overlay').classList.add('hidden');
-        if (ordersData.length > 0 && data && data.length > 0) {
-          checkForNewAlerts(data);
-        }
-        ordersData = data || [];
-        renderOrders();
-      } catch (err) {
-        document.getElementById('loading-overlay').classList.add('hidden');
-      }
+      const data = await callBackend("getOrders");
+      document.getElementById('loading-overlay').classList.add('hidden');
+      if (ordersData.length > 0 && data?.length > 0) checkForNewAlerts(data);
+      ordersData = data || [];
+      renderOrders();
     }
 
-    function triggerInAppNotification(title, message, imageUrl) {
-      const alertBox = document.getElementById('inapp-notification');
-      const textTitle = document.getElementById('inapp-title');
-      const textDesc = document.getElementById('inapp-desc');
-      const imgContainer = document.getElementById('inapp-image-container');
-      const imgTarget = document.getElementById('inapp-image');
-      textTitle.innerText = title;
-      textDesc.innerText = message;
-      if (imageUrl && imageUrl.trim().toLowerCase().startsWith("http")) {
-        imgTarget.src = imageUrl;
-        imgContainer.classList.remove('hidden');
-      } else {
-        imgContainer.classList.add('hidden');
-      }
-      try {
-        const audioCtx = new (window.AudioContext || window.webkitAudioContext)();
-        const oscillator = audioCtx.createOscillator();
-        const gainNode = audioCtx.createGain();
-        oscillator.type = 'sine';
-        oscillator.frequency.setValueAtTime(587.33, audioCtx.currentTime);
-        gainNode.gain.setValueAtTime(0.2, audioCtx.currentTime);
-        oscillator.connect(gainNode);
-        gainNode.connect(audioCtx.destination);
-        oscillator.start();
-        setTimeout(() => oscillator.stop(), 180);
-      } catch(e) { console.log("No se pudo iniciar el canal de sonido:", e); }
-      if ('vibrate' in navigator) { navigator.vibrate([150, 80, 150]); }
-      alertBox.classList.add('activa');
-      setTimeout(() => { alertBox.classList.remove('activa'); }, 5000);
+    function renderOrders() {
+      const myCont = document.getElementById('my-orders-container');
+      const genCont = document.getElementById('orders-container');
+      myCont.innerHTML = ""; genCont.innerHTML = "";
+      
+      ordersData.forEach(o => {
+        const card = document.createElement('div');
+        card.className = "bg-white p-4 rounded-xl border border-slate-200 shadow-sm space-y-2";
+        card.innerHTML = `<div class="flex justify-between font-bold text-xs"><span>📦 ${o.Producto} (x${o.Cantidad})</span><span class="text-teal-600">${o.Estado}</span></div><p class="text-xs text-slate-500">${o.Notas || ''}</p>`;
+        
+        if (o.Vendedor === sessionUser.name) myCont.appendChild(card.cloneNode(true));
+        if (activeFilter === 'all' || o.Estado === 'Pendiente') genCont.appendChild(card);
+      });
     }
 
     function checkForNewAlerts(newData) {
       const currentHash = JSON.stringify(newData.map(o => o.ID_Pedido + '-' + o.Estado));
       if (lastRenderedHash === currentHash) return;
-      const oldMap = {};
-      ordersData.forEach(o => { oldMap[o.ID_Pedido] = o.Estado; });
-      newData.forEach(newOrder => {
-        const oldState = oldMap[newOrder.ID_Pedido];
-        if (oldState === undefined && ordersData.length > 0) {
-          if (sessionUser && sessionUser.role === 'Almacenero') {
-            triggerInAppNotification("🚨 ¡NUEVO PEDIDO EN COLA!", `Producto ${newOrder.Producto} solicitado por ${newOrder.Vendedor}.`, newOrder.Foto);
-          }
-        }
-      });
+      lastRenderedHash = currentHash;
     }
 
     function switchTab(id) {
@@ -500,6 +340,9 @@
       document.getElementById('view-new-order').classList.add('hidden');
       document.getElementById(id).classList.remove('hidden');
     }
+    function setFilter(f) { activeFilter = f; loadData(true); }
+    function previewImage(input) { if (input.files && input.files[0]) { const reader = new FileReader(); reader.onload = function(e) { selectedPhotoBase64 = e.target.result; document.getElementById('image-preview').src = e.target.result; document.getElementById('image-preview-container').classList.remove('hidden'); }; reader.readAsDataURL(input.files[0]); } }
+    async function submitOrder(e) { e.preventDefault(); document.getElementById('loading-overlay').classList.remove('hidden'); await callBackend("addOrder", { product: document.getElementById('order-product').value, qty: document.getElementById('order-qty').value, notes: document.getElementById('order-notes').value, photoBase64: selectedPhotoBase64, senderName: sessionUser.name }); document.getElementById('order-form').reset(); selectedPhotoBase64 = ''; document.getElementById('image-preview-container').classList.add('hidden'); loadData(false); switchTab('view-my-orders'); }
   </script>
 </body>
 </html>
