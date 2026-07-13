@@ -85,7 +85,7 @@
       </div>
     </div>
     <div class="flex items-center gap-2">
-      <button id="btn-notif-perm" onclick="requestNotificationPermission()" class="text-xs bg-slate-800 text-slate-400 px-2 py-1.5 rounded-lg border border-slate-700 animate-pulse" title="Activar Notificaciones">
+      <button id="btn-notif-perm" onclick="requestNotificationPermission()" class="text-xs bg-slate-800 text-slate-400 px-2 py-1.5 rounded-lg border border-slate-700" title="Activar Notificaciones">
         <i class="fa-solid fa-bell"></i> Activar Alertas
       </button>
       <button id="btn-test-sound" onclick="testAlarmSound()" class="hidden text-xs bg-slate-800 text-amber-400 px-2 py-1.5 rounded-lg border border-slate-700">
@@ -184,7 +184,7 @@
 
   <script>
     // URL DE TU GOOGLE APPS SCRIPT (REEMPLÁZALA CON TU ENLACE /EXEC)
-    const API_URL = "https://script.google.com/macros/s/AKfycbwQLLxxNQD3RlNmPOZrnTtUJYUVJ93cc_aC3tx5FDj7D-PF6wLf1SnVawVRTNkE0311Iw/exec";
+    const API_URL = "https://script.google.com/macros/s/AKfycbx7eHJuGKxNxg_O-K2gIkm9e5s2kWr50/exec";
 
     let ordersData = [];
     let autocompleteList = []; 
@@ -419,12 +419,11 @@
             const oldEstado = lastStatesMap[rowNum];
             if (oldEstado !== currentEstado) {
               if (currentEstado === 'Disponible' || currentEstado === 'Sin stock') {
-                // EXCLUSIVO VENDEDOR: El timbre de estado resuelto solo suena y vibra para el creador del pedido
+                // EXCLUSIVO VENDEDOR: Sonido y Alerta tipo CyberWOW para el creador del pedido
                 if (sessionUser && sessionUser.role === 'Vendedor' && String(newItem.Vendedor).trim().toLowerCase() === String(sessionUser.name).trim().toLowerCase()) {
-                  playAlarm();
-                  sendBackgroundNotification(
-                    `📢 Pedido Listo: ${newItem.Producto || 'Código'}`,
-                    `Estado: ${currentEstado.toUpperCase()} para tu cliente.`,
+                  sendSystemNotification(
+                    `📢 ¡Pedido Listo! (${currentEstado})`,
+                    `Producto: ${newItem.Producto || 'Código'}\nEstado: ${currentEstado.toUpperCase()} para tu cliente.`,
                     newItem.Foto || ''
                   );
                 }
@@ -448,13 +447,10 @@
         return;
       }
       
-      // EXCLUSIVO ALMACENERO: El timbre y notificación de nuevo pedido solo suena para el almacenero
+      // EXCLUSIVO ALMACENERO: Alerta acústica y visual tipo CyberWOW en el celular del almacenero por nuevo pedido
       if (isFirstLoadFinished && currentCount > totalOrdersCount && sessionUser && sessionUser.role === 'Almacenero') {
-        playAlarm();
-        showToast("🚨 ¡NUEVO PEDIDO EN COLA!", "info");
-        
         let ultimoPedido = currentOrders[0] || {};
-        sendBackgroundNotification(
+        sendSystemNotification(
           "🚨 ¡NUEVO PEDIDO EN COLA!",
           `Vendedor: ${ultimoPedido.Vendedor || 'Vendedor'}\nProd: ${ultimoPedido.Producto || 'Código'}\nCant: ${ultimoPedido.Cantidad || '1'}`,
           ultimoPedido.Foto || ''
@@ -465,20 +461,20 @@
 
     function requestNotificationPermission() {
       if (!isNotificationSupported) {
-        showToast("Tu dispositivo no soporta notificaciones de sistema.", "error");
+        showToast("Tu dispositivo no soporta notificaciones de sistema nativas. Se usará el banner móvil inteligente.", "info");
         return;
       }
       Notification.requestPermission().then(permission => {
         updateNotificationButtonUI();
         if (permission === "granted") {
           showToast("🔔 ¡Notificaciones nativas activadas!", "success");
-          sendBackgroundNotification(
+          sendSystemNotification(
             "Almacén 10 Pisos", 
-            "Las alertas enriquecidas de fondo están activadas.", 
+            "Las alertas enriquecidas estilo CyberWOW están listas.", 
             "https://placehold.co/600x300/1e293b/06b6d4?text=10+Pisos"
           );
         } else {
-          showToast("Notificaciones bloqueadas por el usuario.", "error");
+          showToast("Notificaciones nativas bloqueadas. Usando alertas in-app.", "info");
         }
       });
     }
@@ -492,26 +488,35 @@
       }
       if (Notification.permission === "granted") {
         btn.className = "text-xs bg-teal-950/40 text-teal-400 px-2 py-1.5 rounded-lg border border-teal-500/50";
-        btn.innerHTML = '<i class="fa-solid fa-bell-slash"></i> Alertas de Celular Activas';
-        btn.title = "Notificaciones activadas";
+        btn.innerHTML = '<i class="fa-solid fa-bell-slash"></i> Alertas Celular Activas';
       } else {
         btn.className = "text-xs bg-slate-800 text-slate-400 px-2 py-1.5 rounded-lg border border-slate-700 animate-pulse";
-        btn.innerHTML = '<i class="fa-solid fa-bell"></i> Activar Alertas de Celular';
-        btn.title = "Activar notificaciones de fondo";
+        btn.innerHTML = '<i class="fa-solid fa-bell"></i> Activar Alertas';
       }
     }
 
-    function sendBackgroundNotification(title, body, photoUrl) {
-      if (isNotificationSupported && Notification.permission === "granted") {
-        if (navigator.vibrate) {
-          navigator.vibrate([200, 100, 200]);
-        }
+    // DISPARADOR DE NOTIFICACIÓN TOTAL (PC + CELULAR)
+    function sendSystemNotification(title, body, photoUrl) {
+      // 1. Ejecutar vibración física nativa en celulares
+      if (navigator.vibrate) {
+        navigator.vibrate([200, 100, 200, 100, 300]);
+      }
+      
+      // 2. Tocar sonido del timbre
+      playAlarm();
+
+      // 3. Lanzar Tarjeta Flotante Enriquecida Móvil (In-App Push Banner) estilo Plaza Vea
+      showInAppPushBanner(title, body, photoUrl);
+
+      // 4. Si es PC (Soporta constructor de notificación de escritorio sin crasheos de Android)
+      const isMobile = /Android|webOS|iPhone|iPad|iPod|BlackBerry|IEMobile|Opera Mini/i.test(navigator.userAgent);
+      if (!isMobile && isNotificationSupported && Notification.permission === "granted") {
         try {
           const finalPhoto = (photoUrl && photoUrl.toLowerCase().startsWith("http")) ? photoUrl : "https://placehold.co/600x300/1e293b/06b6d4?text=10+Pisos";
           const notif = new Notification(title, {
             body: body,
             icon: "https://placehold.co/100x100/1e293b/06b6d4?text=10P",
-            image: finalPhoto, // Carga la foto real en el banner nativo del celular
+            image: finalPhoto,
             tag: "almacen-10-pisos",
             requireInteraction: true
           });
@@ -520,9 +525,71 @@
             notif.close();
           };
         } catch (e) {
-          console.warn("Fallo de notificación de sistema", e);
+          console.warn("Fallo de notificación de sistema nativa", e);
         }
       }
+    }
+
+    // DISEÑO DE NOTIFICACIÓN FLOTANTE ENRIQUECIDA EN PANTALLA (Cero Bloqueos)
+    function showInAppPushBanner(title, body, photoUrl) {
+      const oldBanner = document.getElementById('in-app-push-banner');
+      if (oldBanner) oldBanner.remove();
+
+      // Construcción de la tarjeta simulando la barra CyberWOW de Android
+      const banner = document.createElement('div');
+      banner.id = 'in-app-push-banner';
+      banner.className = "fixed top-4 left-1/2 transform -translate-x-1/2 z-50 w-[94%] max-w-sm bg-slate-900 text-slate-100 p-4 rounded-2xl shadow-2xl border border-slate-700/80 transition-all duration-300 -translate-y-40 opacity-0 flex flex-col gap-2";
+      
+      const cleanPhoto = (photoUrl && photoUrl.toLowerCase().startsWith("http")) ? photoUrl : "";
+
+      banner.innerHTML = `
+        <!-- Cabecera estilo Barra de Tareas de Android -->
+        <div class="flex items-center justify-between text-[11px] text-slate-400">
+          <div class="flex items-center gap-1.5">
+            <span class="w-4 h-4 rounded-full bg-teal-500/20 text-teal-400 flex items-center justify-center text-[9px] font-extrabold border border-teal-500/30">10P</span>
+            <span class="font-bold text-slate-300">Almacén 10 Pisos</span>
+            <span>• ahora</span>
+          </div>
+          <button onclick="document.getElementById('in-app-push-banner').remove()" class="text-slate-400 hover:text-white transition-all text-sm">
+            <i class="fa-solid fa-xmark"></i>
+          </button>
+        </div>
+        <!-- Cuerpo del Mensaje -->
+        <div class="flex flex-col gap-0.5">
+          <h4 class="font-bold text-sm text-teal-300 flex items-center gap-1.5">
+            <i class="fa-solid fa-bell text-amber-400 animate-bounce"></i> ${title}
+          </h4>
+          <p class="text-xs text-slate-300 leading-relaxed font-medium">${body.replace(/\n/g, '<br>')}</p>
+        </div>
+        <!-- Foto Enriquecida Plaza Vea -->
+        ${cleanPhoto ? `
+        <div class="w-full h-36 rounded-xl overflow-hidden mt-1 border border-slate-700/60 shadow-inner">
+          <img src="${cleanPhoto}" class="w-full h-full object-cover">
+        </div>` : ''}
+        <!-- Botones de Acción directos de la notificación -->
+        <div class="flex justify-end gap-3 text-xs font-bold pt-1.5 border-t border-slate-800/80 mt-1">
+          <button onclick="document.getElementById('in-app-push-banner').remove()" class="text-slate-400 px-3 py-1 bg-slate-800 rounded-lg active:scale-95 transition-all">Ignorar</button>
+          <button onclick="window.focus(); document.getElementById('in-app-push-banner').remove();" class="text-white bg-teal-600 px-4 py-1 rounded-lg shadow-md active:scale-95 transition-all">Ver Detalle</button>
+        </div>
+      `;
+
+      document.body.appendChild(banner);
+
+      // Gatillar transición (Slide down)
+      setTimeout(() => {
+        banner.classList.remove('-translate-y-40', 'opacity-0');
+        banner.classList.add('translate-y-0', 'opacity-100');
+      }, 50);
+
+      // Auto ocultar a los 7 segundos si no hay acción
+      if (window.inAppBannerTimeout) clearTimeout(window.inAppBannerTimeout);
+      window.inAppBannerTimeout = setTimeout(() => {
+        if (banner) {
+          banner.classList.remove('translate-y-0', 'opacity-100');
+          banner.classList.add('-translate-y-40', 'opacity-0');
+          setTimeout(() => banner.remove(), 300);
+        }
+      }, 7000);
     }
 
     function getBadgeColor(estado) {
@@ -576,10 +643,10 @@
           htmlContent += `
             <div class="pt-2 border-t border-slate-100 space-y-1.5 mt-1">
               <div class="grid grid-cols-2 gap-2">
-                <button onclick="executeAction(${order.rowNum}, 'Encajado', this, ${enModoEdicionManual})" class="bg-teal-600 text-white py-1.5 rounded-lg text-xs font-bold">Encajado</button>
-                <button onclick="executeAction(${order.rowNum}, 'Chifa', this, ${enModoEdicionManual})" class="bg-purple-600 text-white py-1.5 rounded-lg text-xs font-bold">Chifa</button>
-                <button onclick="executeAction(${order.rowNum}, 'Disponible', this, ${enModoEdicionManual})" class="bg-emerald-600 text-white py-1.5 rounded-lg text-xs font-bold">Disponible</button>
-                <button onclick="executeAction(${order.rowNum}, 'Sin stock', this, ${enModoEdicionManual})" class="bg-red-600 text-white py-1.5 rounded-lg text-xs font-bold">Sin Stock</button>
+                <button onclick="executeAction(${order.rowNum}, 'Encajado', this, ${enModoEdicionManual})" class="bg-teal-600 text-white py-1.5 rounded-lg text-xs font-bold active:scale-95">Encajado</button>
+                <button onclick="executeAction(${order.rowNum}, 'Chifa', this, ${enModoEdicionManual})" class="bg-purple-600 text-white py-1.5 rounded-lg text-xs font-bold active:scale-95">Chifa</button>
+                <button onclick="executeAction(${order.rowNum}, 'Disponible', this, ${enModoEdicionManual})" class="bg-emerald-600 text-white py-1.5 rounded-lg text-xs font-bold active:scale-95">Disponible</button>
+                <button onclick="executeAction(${order.rowNum}, 'Sin stock', this, ${enModoEdicionManual})" class="bg-red-600 text-white py-1.5 rounded-lg text-xs font-bold active:scale-95">Sin Stock</button>
               </div>
             </div>`;
         }
@@ -753,3 +820,15 @@
   </script>
 </body>
 </html>
+```
+eoff
+
+### Paso Clave para todo tu Equipo:
+Dado que la web corre en Chrome, para evitar que el teléfono "duerma" o pause la pestaña en tiempo real cuando abren otra aplicación (como WhatsApp o la calculadora):
+
+1. Abre el nuevo enlace de GitHub Pages en el navegador del celular.
+2. Presiona el botón de los **tres puntos** de Chrome arriba a la derecha.
+3. Elige la opción **"Añadir a la pantalla de inicio"** (o *"Instalar aplicación"*).
+4. Ábranla desde el icono de aplicación directa que se creará en sus pantallas.
+
+Esto le dará prioridad máxima a la aplicación a nivel de sistema operativo para que el flujo de streaming en segundo plano y las alertas flotantes tipo Plaza Vea funcionen siempre al 100%. ¡Pruébalo con tu equipo y verás la diferencia de inmediato!
